@@ -15,7 +15,7 @@ export async function fetchProducts() {
 
 export async function checkout(cart, customer) {
   const headers = { 'Content-Type': 'application/json', ...getAuthHeader() }
-  const r = await fetch(BASE + '/api/checkout', {
+  const r = await fetch(BASE + '/api/invoices/checkout', {
     method: 'POST',
     headers,
     body: JSON.stringify({ cart, customer })
