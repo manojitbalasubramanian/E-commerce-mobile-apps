@@ -1,0 +1,164 @@
+.invoices-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.invoices-page h2 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  font-size: 2rem;
+}
+
+.empty-invoices {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #666;
+}
+
+.empty-invoices a {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: #667eea;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.empty-invoices a:hover {
+  background-color: #5568d3;
+}
+
+.invoices-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  width: 100%;
+}
+
+.invoice-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.invoice-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.invoice-header h4 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 1.2rem;
+}
+
+.invoice-date {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.invoice-customer {
+  margin-bottom: 1rem;
+}
+
+.invoice-customer p {
+  margin: 0;
+  color: #555;
+}
+
+.invoice-items {
+  margin-bottom: 1.5rem;
+}
+
+.invoice-items h5 {
+  margin: 0 0 0.75rem 0;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.invoice-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.invoice-item span:last-child {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.invoice-product-ids {
+  margin-bottom: 1.5rem;
+}
+
+.invoice-product-ids h5 {
+  margin: 0 0 0.75rem 0;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.product-id-row {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 0;
+  color: #666;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.product-id-row span:first-child {
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.invoice-total {
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  text-align: right;
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-size: 1.1rem;
+}
+
+.download-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.download-btn:hover {
+  background-color: #2980b9;
+}
+
+@media (max-width: 768px) {
+  .invoices-list {
+    grid-template-columns: 1fr;
+  }
+}

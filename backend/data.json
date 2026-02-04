@@ -1,0 +1,46 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Aurora X1 Smartphone",
+      "brand": "Aurora",
+      "price": 699,
+      "stock": 25,
+      "image": "https://via.placeholder.com/300x300.png?text=Aurora+X1",
+      "specs": {
+        "display": "6.5-inch OLED",
+        "ram": "8GB",
+        "storage": "128GB",
+        "battery": "4500mAh"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Nebula Pro",
+      "brand": "Nebula",
+      "price": 999,
+      "stock": 10,
+      "image": "https://via.placeholder.com/300x300.png?text=Nebula+Pro",
+      "specs": {
+        "display": "6.8-inch AMOLED",
+        "ram": "12GB",
+        "storage": "256GB",
+        "battery": "5000mAh"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Comet Lite",
+      "brand": "Comet",
+      "price": 349,
+      "stock": 40,
+      "image": "https://via.placeholder.com/300x300.png?text=Comet+Lite",
+      "specs": {
+        "display": "6.1-inch LCD",
+        "ram": "4GB",
+        "storage": "64GB",
+        "battery": "3200mAh"
+      }
+    }
+  ]
+}
