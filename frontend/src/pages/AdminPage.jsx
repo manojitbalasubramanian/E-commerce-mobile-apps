@@ -5,6 +5,8 @@ import { getToken } from '../services/auth'
 import '../styles/AdminPage.css'
 import { formatCurrency } from '../utils/currency'
 
+const BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000'
+
 export default function AdminPage() {
   const [products, setProducts] = useState([])
   const [formData, setFormData] = useState({ name: '', brand: '', price: '', description: '', stock: '', image: '' })
@@ -25,7 +27,7 @@ export default function AdminPage() {
 
   async function loadProducts() {
     try {
-      const r = await fetch('http://localhost:3000/api/products')
+      const r = await fetch(BASE + '/api/products')
       const data = await r.json()
       setProducts(Array.isArray(data) ? data : [])
     } catch (e) {
@@ -52,8 +54,8 @@ export default function AdminPage() {
     try {
       const method = editingId ? 'PUT' : 'POST'
       const url = editingId
-        ? `http://localhost:3000/api/products/${editingId}`
-        : 'http://localhost:3000/api/products'
+        ? BASE + `/api/products/${editingId}`
+        : BASE + '/api/products'
 
       const r = await fetch(url, {
         method,
@@ -93,7 +95,7 @@ export default function AdminPage() {
     if (!window.confirm('Are you sure you want to delete this product?')) return
 
     try {
-      const r = await fetch(`http://localhost:3000/api/products/${id}`, {
+      const r = await fetch(BASE + `/api/products/${id}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       })
