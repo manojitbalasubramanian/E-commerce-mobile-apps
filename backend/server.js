@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 // Config & Database
 const { connectDB } = require('./config/database');
-const { PORT } = require('./config/constants');
+const { PORT, FRONTEND_URL } = require('./config/constants');
 
 // Models
 const User = require('./models/User');
@@ -14,12 +14,16 @@ const User = require('./models/User');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const invoiceRoutes = require('./routes/invoices');
+const offerRoutes = require('./routes/offers');
 
 // Initialize Express app
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 // Store User model in app.locals for use in routes
@@ -32,6 +36,7 @@ connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/offers', offerRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

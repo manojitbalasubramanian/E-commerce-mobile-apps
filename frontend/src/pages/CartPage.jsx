@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { checkout, downloadInvoicePDF } from '../services/api'
 import '../styles/CartPage.css'
 import { formatCurrency } from '../utils/currency'
@@ -10,25 +10,36 @@ export default function CartPage({ cart, onUpdateQuantity, onCheckout }) {
   const [message, setMessage] = useState('')
   const [customerName, setCustomerName] = useState('')
   const navigate = useNavigate()
+  const location = useLocation()
+  
+  // Check for Buy Now single item purchase
+  const buyNowItem = location.state?.buyNowItem
+  const displayCart = buyNowItem ? [buyNowItem] : cart
+  const isBuyNow = !!buyNowItem
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  // Calculate amounts:
+  const subtotalOriginal = displayCart.reduce((sum, item) => sum + (item.originalPrice || item.price) * item.quantity, 0)
+  const subtotalDiscounted = displayCart.reduce((sum, item) => sum + (item.price || item.originalPrice) * item.quantity, 0)
+  const totalDiscount = subtotalOriginal - subtotalDiscounted
+  const tax = Math.round((subtotalDiscounted * 0.18 + Number.EPSILON) * 100) / 100
+  const total = Math.round((subtotalDiscounted * 1.18 + Number.EPSILON) * 100) / 100
 
   async function handleCheckout() {
     if (!customerName.trim()) {
       setMessage('Please enter your name')
       return
     }
-    if (cart.length === 0) {
+    if (displayCart.length === 0) {
       setMessage('Cart is empty')
       return
     }
 
     setLoading(true)
     try {
-      const res = await checkout(cart, { name: customerName })
+      const res = await checkout(displayCart, { name: customerName })
       setMessage(`✓ Invoice created successfully! ID: ${res.invoice.id}`)
       showToast('Invoice created successfully', 'success')
-      onCheckout()
+      if (!isBuyNow) onCheckout()
       setCustomerName('')
       setTimeout(() => navigate('/invoices'), 1500)
     } catch (e) {
@@ -42,9 +53,9 @@ export default function CartPage({ cart, onUpdateQuantity, onCheckout }) {
 
   return (
     <div className="cart-page">
-      <h2>Shopping Cart</h2>
+      <h2>{isBuyNow ? 'Quick Purchase' : 'Shopping Cart'}</h2>
 
-      {cart.length === 0 ? (
+      {displayCart.length === 0 ? (
         <div className="empty-cart">
           <p>Your cart is empty</p>
           <a href="/">Continue shopping</a>
@@ -52,47 +63,73 @@ export default function CartPage({ cart, onUpdateQuantity, onCheckout }) {
       ) : (
         <>
           <div className="cart-items">
-            {cart.map(item => (
+            {displayCart.map(item => (
               <div key={item.id} className="cart-item">
                 <div className="item-info">
                   <h4>{item.name}</h4>
-                  <p>Price: {formatCurrency(item.price)}</p>
+                  <p className="old-price">Old Price: {formatCurrency(item.originalPrice || item.price)}</p>
+                  <p className="offer-price">Offer Price: {formatCurrency(item.price || item.originalPrice)}</p>
+                  {item.appliedOffers && item.appliedOffers.length > 0 && (
+                    <div className="applied-offers">
+                      {item.appliedOffers.map((o, idx) => (
+                        <div key={idx} className="applied-offer">{o.name || `${o.discountPercent}% OFF`}</div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div className="item-quantity">
-                  <button onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}>−</button>
-                  <input
-                    type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) => onUpdateQuantity(item.id, parseInt(e.target.value) || 1)}
-                  />
-                  <button onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}>+</button>
-                </div>
-                <div className="item-total">
-                  {formatCurrency(item.price * item.quantity)}
-                </div>
-                <button
-                  className="remove-btn"
-                  onClick={() => onUpdateQuantity(item.id, 0)}
-                >
-                  Remove
-                </button>
+                {!isBuyNow && (
+                  <>
+                    <div className="item-quantity">
+                      <button onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}>−</button>
+                      <input
+                        type="number"
+                        min="1"
+                        value={item.quantity}
+                        onChange={(e) => onUpdateQuantity(item.id, parseInt(e.target.value) || 1)}
+                      />
+                      <button onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}>+</button>
+                    </div>
+                    <div className="item-total">
+                      {formatCurrency((item.price || item.originalPrice) * item.quantity)}
+                    </div>
+                    <button
+                      className="remove-btn"
+                      onClick={() => onUpdateQuantity(item.id, 0)}
+                    >
+                      Remove
+                    </button>
+                  </>
+                )}
+                {isBuyNow && (
+                  <div className="item-total">
+                    Quantity: 1<br/>
+                    {formatCurrency(item.price || item.originalPrice)}
+                  </div>
+                )}
               </div>
             ))}
           </div>
 
           <div className="cart-summary">
             <div className="summary-row">
-              <span>Subtotal:</span>
-              <span>{formatCurrency(total)}</span>
+              <span>Subtotal (Original):</span>
+              <span>{formatCurrency(subtotalOriginal)}</span>
+            </div>
+            <div className="summary-row">
+              <span>Discount:</span>
+              <span>-{formatCurrency(totalDiscount)}</span>
+            </div>
+            <div className="summary-row">
+              <span>Subtotal (After Discount):</span>
+              <span>{formatCurrency(subtotalDiscounted)}</span>
             </div>
             <div className="summary-row">
               <span>Tax (18%):</span>
-              <span>{formatCurrency(total * 0.18)}</span>
+              <span>{formatCurrency(tax)}</span>
             </div>
             <div className="summary-row total">
               <span>Total:</span>
-              <span>{formatCurrency(total * 1.18)}</span>
+              <span>{formatCurrency(total)}</span>
             </div>
           </div>
 

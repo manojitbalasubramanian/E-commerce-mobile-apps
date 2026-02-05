@@ -24,10 +24,22 @@ export default function App() {
   }, [])
 
   function addToCart(product) {
+    const normalizedId = product.id || product._id
     setCart(prev => {
-      const existing = prev.find(p => p.id === product.id)
-      if (existing) return prev.map(p => p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p)
-      return [...prev, { ...product, quantity: 1 }]
+      const existing = prev.find(p => p.id === normalizedId)
+      if (existing) return prev.map(p => p.id === normalizedId ? { ...p, quantity: p.quantity + 1 } : p)
+
+      const item = {
+        id: normalizedId,
+        _id: product._id,
+        name: product.name,
+        image: product.image,
+        quantity: 1,
+        price: product.price, // effective / offer price
+        originalPrice: product.originalPrice || product.price,
+        appliedOffers: product.appliedOffers || []
+      }
+      return [...prev, item]
     })
   }
 
