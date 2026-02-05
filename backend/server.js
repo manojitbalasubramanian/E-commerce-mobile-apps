@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 // Config & Database
 const { connectDB } = require('./config/database');
-const { PORT } = require('./config/constants');
+const { PORT, FRONTEND_URL } = require('./config/constants');
 
 // Models
 const User = require('./models/User');
@@ -19,7 +19,10 @@ const invoiceRoutes = require('./routes/invoices');
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: FRONTEND_URL,
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 // Store User model in app.locals for use in routes
