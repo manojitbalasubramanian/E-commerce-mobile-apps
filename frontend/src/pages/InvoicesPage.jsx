@@ -93,7 +93,7 @@ export default function InvoicesPage() {
                   className="download-btn"
                   onClick={() => handleDownloadPDF(id)}
                 >
-                  📥 Download PDF
+                  Download PDF
                 </button>
               </div>
             )

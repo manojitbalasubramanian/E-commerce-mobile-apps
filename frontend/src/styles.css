@@ -1,6 +1,11 @@
 * {
   box-sizing: border-box;
-  font-family: Inter, Segoe UI, Helvetica, Arial, sans-serif;
+  font-family:
+    Inter,
+    Segoe UI,
+    Helvetica,
+    Arial,
+    sans-serif;
 }
 
 body {
@@ -79,6 +84,17 @@ main {
   margin: 6px 0;
 }
 
+.offer-badge {
+  display: inline-block;
+  background: #e74c3c;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+}
+
 .brand {
   color: #666;
   font-size: 0.9rem;
@@ -89,8 +105,27 @@ main {
   margin-top: 8px;
 }
 
-.product-info button {
+/* Offer price styles */
+.original-price {
+  text-decoration: line-through;
+  color: #b0b0b0;
+  margin-right: 8px;
+  font-weight: 600;
+}
+
+.discounted-price {
+  color: #e74c3c;
+  font-weight: 900;
+}
+
+.product-actions {
+  display: flex;
+  gap: 8px;
   margin-top: 10px;
+}
+
+.product-info button {
+  flex: 1;
   padding: 8px 12px;
   border: none;
   background: #0b69ff;
@@ -98,10 +133,20 @@ main {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .product-info button:hover {
   background: #0a58e6;
+}
+
+.product-info .buy-now-btn {
+  background: #27ae60;
+}
+
+.product-info .buy-now-btn:hover {
+  background: #229954;
 }
 
 .cart {

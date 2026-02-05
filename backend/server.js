@@ -14,6 +14,7 @@ const User = require('./models/User');
 const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const invoiceRoutes = require('./routes/invoices');
+const offerRoutes = require('./routes/offers');
 
 // Initialize Express app
 const app = express();
@@ -35,6 +36,7 @@ connectDB();
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/offers', offerRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
