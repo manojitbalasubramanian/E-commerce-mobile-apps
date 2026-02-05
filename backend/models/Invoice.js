@@ -20,6 +20,17 @@ const invoiceSchema = new mongoose.Schema({
       },
       name: String,
       price: Number,
+      originalPrice: Number,
+      appliedOffers: [
+        {
+          offerId: mongoose.Schema.Types.ObjectId,
+          name: String,
+          discountPercent: Number,
+          startDate: Date,
+          endDate: Date,
+          active: Boolean
+        }
+      ],
       quantity: Number
     }
   ],

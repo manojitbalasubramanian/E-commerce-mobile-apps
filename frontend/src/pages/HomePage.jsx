@@ -8,9 +8,12 @@ export default function HomePage({ onAddToCart }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchProducts()
+    fetchProducts({ retries: 3 })
       .then(setProducts)
-      .catch(() => setProducts([]))
+      .catch(async (e) => {
+        setProducts([])
+        try { const { showToast } = await import('../utils/toast'); showToast(e.message || 'Failed to load products', 'error') } catch {}
+      })
       .finally(() => setLoading(false))
   }, [])
 
@@ -21,7 +24,7 @@ export default function HomePage({ onAddToCart }) {
   return (
     <div className="home-page">
       <section className="hero">
-        <h2>Welcome to Mobile Shop</h2>
+        <h2>Welcome to Shree Mobiles</h2>
         <p>Explore our latest mobile devices and accessories</p>
       </section>
       <section className="products-section">

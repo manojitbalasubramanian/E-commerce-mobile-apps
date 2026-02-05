@@ -35,10 +35,18 @@ router.post('/', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can add products' });
     }
 
-    const { name, brand, price, description, stock, image } = req.body;
+    const { name, brand, price, description, stock, image, offer } = req.body;
 
     if (!name || !brand || price === undefined) {
       return res.status(400).json({ error: 'Name, brand, and price are required' });
+    }
+
+    // Validate offer if provided
+    if (offer) {
+      if (offer.discountPercent !== undefined) {
+        const dp = Number(offer.discountPercent)
+        if (isNaN(dp) || dp < 0 || dp > 100) return res.status(400).json({ error: 'Invalid offer discountPercent' })
+      }
     }
 
     // Generate sequential productId
@@ -55,6 +63,7 @@ router.post('/', verifyToken, async (req, res) => {
       name,
       brand,
       price,
+      offer: offer || undefined,
       description,
       stock: stock || 0,
       image,
@@ -77,10 +86,22 @@ router.put('/:id', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can update products' });
     }
 
-    const { name, brand, price, description, stock, image } = req.body;
+    const { name, brand, price, description, stock, image, offer } = req.body;
+
+    // Validate offer if provided
+    if (offer) {
+      if (offer.discountPercent !== undefined) {
+        const dp = Number(offer.discountPercent)
+        if (isNaN(dp) || dp < 0 || dp > 100) return res.status(400).json({ error: 'Invalid offer discountPercent' })
+      }
+    }
+
+    const updateObj = { name, brand, price, description, stock, image, updatedAt: new Date() }
+    if (offer !== undefined) updateObj.offer = offer
+
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      { name, brand, price, description, stock, image, updatedAt: new Date() },
+      updateObj,
       { new: true }
     );
 

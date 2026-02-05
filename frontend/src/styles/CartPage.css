@@ -71,6 +71,17 @@
   color: #666;
 }
 
+.old-price {
+  text-decoration: line-through;
+  color: #999;
+  margin-top: 0.25rem;
+}
+.offer-price {
+  color: #e74c3c;
+  font-weight: 800;
+  margin-top: 0.25rem;
+}
+
 .item-quantity {
   display: flex;
   align-items: center;
@@ -202,9 +213,26 @@
   background-color: #229954;
 }
 
-.checkout-btn:disabled {
+..checkout-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.applied-offers {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.applied-offer {
+  background: #fff4e6;
+  color: #b35900;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid #ffdca8;
 }
 
 @media (max-width: 768px) {
