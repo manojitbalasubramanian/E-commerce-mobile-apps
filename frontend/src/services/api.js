@@ -4,7 +4,7 @@ import { getAuthHeader } from './auth'
 async function handleResponse(r, fallbackMessage) {
   if (r.ok) return r.json()
   let err = { error: fallbackMessage }
-  try { err = await r.json() } catch (e) {}
+  try { err = await r.json() } catch (e) { }
   throw new Error(err.error || err.message || fallbackMessage)
 }
 
@@ -71,6 +71,12 @@ export async function fetchInvoices() {
   const headers = { ...getAuthHeader() }
   const r = await fetch(BASE + '/api/invoices', { headers })
   return handleResponse(r, 'Failed to fetch invoices')
+}
+
+export async function fetchAllInvoices() {
+  const headers = { ...getAuthHeader() }
+  const r = await fetch(BASE + '/api/invoices/all', { headers })
+  return handleResponse(r, 'Failed to fetch all invoices')
 }
 
 export async function fetchInvoice(id) {
