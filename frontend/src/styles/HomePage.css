@@ -267,6 +267,30 @@
   background: #0022cc;
 }
 
+.card-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-quick-buy {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #10b981;
+  /* Green */
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-quick-buy:hover {
+  background: #059669;
+}
+
 /* NEWSLETTER */
 .newsletter-section {
   padding: 60px 10%;

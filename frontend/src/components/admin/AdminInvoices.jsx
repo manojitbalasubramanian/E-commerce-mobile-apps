@@ -1,12 +1,31 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { fetchAllInvoices, downloadInvoicePDF } from '../../services/api'
-import '../../styles/InvoicesPage.css'
+import '../../styles/AdminInvoices.css'
 import { formatCurrency } from '../../utils/currency'
 import { showToast } from '../../utils/toast'
+import {
+    Plus,
+    Search,
+    Calendar,
+    Filter,
+    MoreVertical,
+    FileText,
+    Clock,
+    AlertCircle,
+    Download,
+    ChevronLeft,
+    ChevronRight
+} from 'lucide-react'
 
 export default function AdminInvoices() {
     const [invoices, setInvoices] = useState([])
     const [loading, setLoading] = useState(true)
+    const [searchTerm, setSearchTerm] = useState('')
+    const [statusFilter, setStatusFilter] = useState('All')
+
+    const categories = ['All', 'Paid', 'Pending', 'Overdue']
+    const navigate = useNavigate()
 
     useEffect(() => {
         loadInvoices()
@@ -15,7 +34,6 @@ export default function AdminInvoices() {
     async function loadInvoices() {
         try {
             const data = await fetchAllInvoices()
-            // Sort by latest first if not already sorted
             const sorted = (data.invoices || []).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
             setInvoices(sorted)
         } catch (e) {
@@ -26,7 +44,8 @@ export default function AdminInvoices() {
         }
     }
 
-    async function handleDownloadPDF(invoiceId) {
+    async function handleDownloadPDF(e, invoiceId) {
+        e.stopPropagation() // Prevent row click
         try {
             showToast('Generating PDF...', 'info')
             await downloadInvoicePDF(invoiceId)
@@ -37,116 +56,163 @@ export default function AdminInvoices() {
         }
     }
 
-    function getStatusColor(status) {
-        switch ((status || '').toLowerCase()) {
-            case 'paid': return '#10b981'
-            case 'pending': return '#f59e0b'
-            case 'cancelled': return '#ef4444'
-            default: return '#64748b'
-        }
+    const getStatus = (status) => {
+        if (!status) return 'completed'
+        return status.toLowerCase()
     }
 
+    const getStatusIcon = (status) => {
+        const s = getStatus(status)
+        if (s === 'paid' || s === 'completed') return <FileText size={20} />
+        if (s === 'pending') return <Clock size={20} />
+        return <AlertCircle size={20} />
+    }
+
+    const getStatusClass = (status) => {
+        const s = getStatus(status)
+        if (s === 'paid' || s === 'completed') return 'status-paid'
+        if (s === 'pending') return 'status-pending'
+        return 'status-overdue'
+    }
+
+    const filteredInvoices = invoices.filter(inv => {
+        const matchesSearch =
+            inv.invoiceNumber?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            inv.customerName?.toLowerCase().includes(searchTerm.toLowerCase())
+
+        const matchesStatus = statusFilter === 'All' || getStatus(inv.status) === statusFilter.toLowerCase()
+
+        return matchesSearch && matchesStatus
+    })
+
     return (
-        <div className="admin-invoices" style={{ padding: '24px' }}>
-            <div className="header" style={{ marginBottom: '24px' }}>
-                <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>Sales & Invoices</h2>
-                <p style={{ color: '#64748b' }}>Manage all customer orders and invoices</p>
+        <div className="admin-invoices-container">
+            {/* Header */}
+            <div className="admin-header">
+                <div className="header-content">
+                    <h1>My Invoices</h1>
+                    <p>Manage and track your business billing with precision</p>
+                </div>
+                <button className="new-invoice-btn">
+                    <Plus size={18} />
+                    New Invoice
+                </button>
             </div>
 
+            {/* Filters Bar */}
+            <div className="filters-bar">
+                <div className="search-container">
+                    <Search className="search-icon" size={18} />
+                    <input
+                        type="text"
+                        placeholder="Search by Invoice ID or Customer Name..."
+                        className="search-input"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+
+                <button className="filter-btn">
+                    <Calendar size={16} />
+                    Oct 01 - Oct 31, 2023
+                </button>
+
+                <button className="filter-btn">
+                    <Filter size={16} />
+                    Status: {statusFilter}
+                </button>
+
+                <button className="kebab-btn">
+                    <MoreVertical size={16} />
+                </button>
+            </div>
+
+            {/* Invoices List */}
             {loading ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}>Loading invoices...</div>
-            ) : invoices.length === 0 ? (
-                <div className="empty-state" style={{
-                    textAlign: 'center',
-                    padding: '60px',
-                    background: 'white',
-                    borderRadius: '12px',
-                    color: '#64748b'
-                }}>
-                    No invoices found in the system.
+                <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading invoices...</div>
+            ) : filteredInvoices.length === 0 ? (
+                <div style={{ padding: '60px', textAlign: 'center', background: 'white', borderRadius: '12px', color: '#64748b' }}>
+                    No invoices match your criteria.
                 </div>
             ) : (
-                <div className="invoices-table-container" style={{
-                    background: 'white',
-                    borderRadius: '12px',
-                    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)',
-                    overflow: 'hidden'
-                }}>
-                    <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                        <thead>
-                            <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
-                                <th style={{ padding: '16px', fontWeight: '600', color: '#475569' }}>Invoice #</th>
-                                <th style={{ padding: '16px', fontWeight: '600', color: '#475569' }}>Date</th>
-                                <th style={{ padding: '16px', fontWeight: '600', color: '#475569' }}>Customer</th>
-                                <th style={{ padding: '16px', fontWeight: '600', color: '#475569' }}>Items</th>
-                                <th style={{ padding: '16px', fontWeight: '600', color: '#475569' }}>Amount</th>
-                                <th style={{ padding: '16px', fontWeight: '600', color: '#475569' }}>Status</th>
-                                <th style={{ padding: '16px', fontWeight: '600', color: '#475569' }}>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {invoices.map(inv => (
-                                <tr key={inv._id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                                    <td style={{ padding: '16px', fontFamily: 'monospace' }}>#{inv.invoiceNumber}</td>
-                                    <td style={{ padding: '16px' }}>
-                                        {new Date(inv.createdAt).toLocaleDateString()}
-                                        <div style={{ fontSize: '12px', color: '#94a3b8' }}>
-                                            {new Date(inv.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                <>
+                    <div className="invoices-list">
+                        {filteredInvoices.map(inv => {
+                            const statusClass = getStatusClass(inv.status)
+
+                            return (
+                                <div
+                                    key={inv._id}
+                                    className={`invoice-card-row ${statusClass}`}
+                                    onClick={() => navigate(`/invoices/${inv._id}`)}
+                                >
+                                    <div className={`card-left-accent ${statusClass}`}></div>
+
+                                    <div className="card-content">
+                                        {/* Icon */}
+                                        <div className={`icon-box ${statusClass}`}>
+                                            {getStatusIcon(inv.status)}
                                         </div>
-                                    </td>
-                                    <td style={{ padding: '16px' }}>
-                                        <div style={{ fontWeight: '500' }}>{inv.customerName || 'Guest'}</div>
-                                        <div style={{ fontSize: '12px', color: '#94a3b8' }}>{inv.customerEmail}</div>
-                                    </td>
-                                    <td style={{ padding: '16px' }}>
-                                        {inv.items.length} item(s)
-                                        <div style={{ fontSize: '12px', color: '#64748b', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                            {inv.items.map(i => i.name).join(', ')}
+
+                                        {/* Invoice ID & Date */}
+                                        <div className="info-group">
+                                            <div className="info-value">#{inv.invoiceNumber}</div>
+                                            <div className="info-sub">Issued on {new Date(inv.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
                                         </div>
-                                    </td>
-                                    <td style={{ padding: '16px', fontWeight: '600' }}>{formatCurrency(inv.total)}</td>
-                                    <td style={{ padding: '16px' }}>
-                                        <span style={{
-                                            padding: '4px 12px',
-                                            borderRadius: '20px',
-                                            fontSize: '12px',
-                                            fontWeight: '500',
-                                            background: `${getStatusColor(inv.status)}20`,
-                                            color: getStatusColor(inv.status)
-                                        }}>
-                                            {inv.status || 'Paid'}
-                                        </span>
-                                    </td>
-                                    <td style={{ padding: '16px' }}>
+
+                                        {/* Customer */}
+                                        <div className="info-group">
+                                            <div className="info-label">CUSTOMER</div>
+                                            <div className="info-value">{inv.customerName || 'Aditya Sharma'}</div>
+                                        </div>
+
+                                        {/* Items Summary */}
+                                        <div className="info-group items-group">
+                                            <div className="info-label">ITEMS SUMMARY</div>
+                                            <div className="info-sub" style={{ overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis', maxWidth: '300px' }}>
+                                                {inv.items.map(i => i.name).join(', ')}
+                                            </div>
+                                        </div>
+
+                                        {/* Total */}
+                                        <div className="amount-group">
+                                            <div className="info-label">TOTAL</div>
+                                            <div className="amount-value">{formatCurrency(inv.total)}</div>
+                                        </div>
+
+                                        {/* Status Badge */}
+                                        <div className={`status-badge ${statusClass}`}>
+                                            {inv.status || 'PAID'}
+                                        </div>
+
+                                        {/* Actions */}
                                         <button
-                                            onClick={() => handleDownloadPDF(inv._id)}
-                                            style={{
-                                                background: 'white',
-                                                border: '1px solid #e2e8f0',
-                                                borderRadius: '6px',
-                                                padding: '6px 12px',
-                                                cursor: 'pointer',
-                                                color: '#3b82f6',
-                                                fontSize: '14px',
-                                                transition: 'all 0.2s'
-                                            }}
-                                            onMouseOver={(e) => {
-                                                e.target.style.background = '#eff6ff'
-                                                e.target.style.borderColor = '#3b82f6'
-                                            }}
-                                            onMouseOut={(e) => {
-                                                e.target.style.background = 'white'
-                                                e.target.style.borderColor = '#e2e8f0'
-                                            }}
+                                            className="action-btn"
+                                            onClick={(e) => handleDownloadPDF(e, inv._id)}
+                                            title="Download PDF"
                                         >
-                                            Download PDF
+                                            <Download size={20} />
                                         </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+
+                    {/* Pagination (Mock UI) */}
+                    <div className="pagination">
+                        <span>Showing <strong>1 - {Math.min(10, filteredInvoices.length)}</strong> of <strong>{filteredInvoices.length}</strong> invoices</span>
+                        <div className="page-numbers">
+                            <button className="page-btn"><ChevronLeft size={16} /></button>
+                            <button className="page-btn active">1</button>
+                            <button className="page-btn">2</button>
+                            <button className="page-btn">3</button>
+                            <span style={{ alignSelf: 'center' }}>...</span>
+                            <button className="page-btn">9</button>
+                            <button className="page-btn"><ChevronRight size={16} /></button>
+                        </div>
+                    </div>
+                </>
             )}
         </div>
     )

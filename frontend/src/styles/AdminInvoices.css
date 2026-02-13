@@ -1,0 +1,324 @@
+.admin-invoices-container {
+    padding: 2rem;
+    background-color: #f8fafc;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.header-content h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.5rem 0;
+}
+
+.header-content p {
+    color: #64748b;
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+.new-invoice-btn {
+    background-color: #2563eb;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06);
+}
+
+.new-invoice-btn:hover {
+    background-color: #1d4ed8;
+}
+
+/* Filters Bar */
+.filters-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.search-container {
+    flex: 1;
+    min-width: 300px;
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 3rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background-color: white;
+    font-size: 0.875rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #475569;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.filter-btn:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.kebab-btn {
+    padding: 0.75rem;
+    background-color: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    color: #64748b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Invoice Cards List */
+.invoices-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.invoice-card-row {
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid transparent;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    transition: transfrom 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.invoice-card-row:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+.card-left-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.status-paid .card-left-accent {
+    background-color: #10b981;
+}
+
+.status-pending .card-left-accent {
+    background-color: #f59e0b;
+}
+
+.status-overdue .card-left-accent {
+    background-color: #ef4444;
+}
+
+.status-cancelled .card-left-accent {
+    background-color: #64748b;
+}
+
+.card-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 2rem;
+    padding-left: 1rem;
+    /* Offset for accent border */
+}
+
+.icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.status-paid .icon-box {
+    background-color: #ecfdf5;
+    color: #10b981;
+}
+
+.status-pending .icon-box {
+    background-color: #fffbeb;
+    color: #f59e0b;
+}
+
+.status-overdue .icon-box {
+    background-color: #fef2f2;
+    color: #ef4444;
+}
+
+.info-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 140px;
+}
+
+.info-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.info-sub {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-weight: 400;
+    margin-top: 0.1rem;
+}
+
+.items-group {
+    flex: 2;
+    min-width: 200px;
+}
+
+.amount-group {
+    text-align: right;
+    min-width: 120px;
+}
+
+.amount-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-paid .status-badge {
+    background-color: #d1fae5;
+    color: #047857;
+}
+
+.status-pending .status-badge {
+    background-color: #fef3c7;
+    color: #b45309;
+}
+
+.status-overdue .status-badge {
+    background-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.action-btn:hover {
+    color: #3b82f6;
+    background-color: #eff6ff;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #64748b;
+    font-size: 0.875rem;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.page-btn {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    border: 1px solid #e2e8f0;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.page-btn.active {
+    background-color: #2563eb;
+    color: white;
+    border-color: #2563eb;
+}
+
+.page-btn:hover:not(.active) {
+    background-color: #f1f5f9;
+}

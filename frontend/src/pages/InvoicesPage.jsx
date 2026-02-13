@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom' // Import useNavigate
 import { fetchInvoices, downloadInvoicePDF } from '../services/api'
 import '../styles/InvoicesPage.css'
 import { formatCurrency } from '../utils/currency'
@@ -7,6 +8,7 @@ import { showToast } from '../utils/toast'
 export default function InvoicesPage() {
   const [invoices, setInvoices] = useState([])
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate() // Initialize hook
 
   useEffect(() => {
     loadInvoices()
@@ -23,7 +25,8 @@ export default function InvoicesPage() {
     }
   }
 
-  async function handleDownloadPDF(invoiceId) {
+  async function handleDownloadPDF(e, invoiceId) {
+    e.stopPropagation() // Prevent card click
     try {
       await downloadInvoicePDF(invoiceId)
       showToast('Invoice download started', 'success')
@@ -50,7 +53,12 @@ export default function InvoicesPage() {
           {invoices.map(invoice => {
             const id = invoice._id || invoice.id || invoice.invoiceNumber
             return (
-              <div key={id} className="invoice-card">
+              <div
+                key={id}
+                className="invoice-card"
+                onClick={() => navigate(`/invoices/${id}`)}
+                style={{ cursor: 'pointer' }}
+              >
                 <div className="invoice-header">
                   <h4>Invoice #{invoice.invoiceNumber || id}</h4>
                   <span className="invoice-date">
@@ -91,7 +99,7 @@ export default function InvoicesPage() {
 
                 <button
                   className="download-btn"
-                  onClick={() => handleDownloadPDF(id)}
+                  onClick={(e) => handleDownloadPDF(e, id)}
                 >
                   Download PDF
                 </button>

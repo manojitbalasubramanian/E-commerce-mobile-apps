@@ -85,20 +85,33 @@ export async function fetchInvoice(id) {
   return handleResponse(r, 'Failed to fetch invoice')
 }
 
-export async function downloadInvoicePDF(invoiceId) {
+export async function fetchInvoicePDF(invoiceId) {
   const headers = { ...getAuthHeader() }
   const r = await fetch(BASE + `/api/invoices/${invoiceId}/pdf`, { headers })
   if (!r.ok) {
-    await handleResponse(r, 'Failed to download PDF')
-    return
+    // try to parse json error
+    try {
+      const err = await r.json()
+      throw new Error(err.error || 'Failed to fetch PDF')
+    } catch {
+      throw new Error('Failed to fetch PDF')
+    }
   }
-  const blob = await r.blob()
-  const url = window.URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `invoice-${invoiceId}.pdf`
-  document.body.appendChild(a)
-  a.click()
-  window.URL.revokeObjectURL(url)
-  document.body.removeChild(a)
+  return await r.blob()
+}
+
+export async function downloadInvoicePDF(invoiceId) {
+  try {
+    const blob = await fetchInvoicePDF(invoiceId)
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `invoice-${invoiceId}.pdf`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  } catch (e) {
+    throw e
+  }
 }
