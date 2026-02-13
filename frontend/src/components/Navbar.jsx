@@ -1,82 +1,70 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { getUser, logout, isAuthenticated } from '../services/auth'
+import { isAuthenticated, logout, getUser } from '../services/auth'
 import '../styles/Navbar.css'
 
-export default function Navbar({ isLoggedIn, user, onLogout }) {
-  const [displayUser, setDisplayUser] = useState(null)
-  const [showMenu, setShowMenu] = useState(false)
+export default function Navbar() {
+  const loggedIn = isAuthenticated()
+  const user = getUser()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    if (isLoggedIn && user) {
-      setDisplayUser(user)
-    } else {
-      setDisplayUser(null)
-    }
-  }, [isLoggedIn, user])
 
   function handleLogout() {
     logout()
-    onLogout()
     navigate('/')
   }
 
   return (
-    <>
-      <nav className="navbar">
-        <div className="navbar-container">
-          <Link to="/" className="nav-brand">🏪 Shree Mobiles</Link>
-
-          <button
-            className="nav-toggle"
-            aria-label="Toggle menu"
-            onClick={() => setShowMenu((s) => !s)}
-          >
-            <span className={`hamburger ${showMenu ? 'open' : ''}`} />
-          </button>
-
-          <ul className={`nav-menu ${showMenu ? 'active' : ''}`} onClick={() => setShowMenu(false)}>
-            <li className="nav-item">
-              <Link to="/" className="nav-link">Home</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/cart" className="nav-link">Cart</Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/invoices" className="nav-link">Invoices</Link>
-            </li>
-            {isLoggedIn && displayUser?.role === 'admin' && (
-              <>
-                <li className="nav-item">
-                  <Link to="/admin" className="nav-link admin-link">⚙️ Admin</Link>
-                </li>
-              </>
-            )}
-            {isLoggedIn ? (
-              <>
-                <li className="nav-item">
-                  <span className="nav-user">👤 {displayUser?.name || 'User'}</span>
-                </li>
-                <li className="nav-item">
-                  <button onClick={handleLogout} className="nav-link logout-btn">
-                    Logout
-                  </button>
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <Link to="/signin" className="nav-link auth-link">Sign In</Link>
-                </li>
-                <li className="nav-item">
-                  <Link to="/signup" className="nav-link signup-link">Sign Up</Link>
-                </li>
-              </>
-            )}
+    <nav className="navbar">
+      <div className="navbar-container">
+        <div className="nav-left">
+          <Link to="/" className="nav-brand">
+            <span className="brand-logo">SM</span> SHREE MOBILES
+          </Link>
+          <ul className="nav-links">
+            <li><Link to="/" className="nav-link">Home</Link></li>
+            <li><Link to="/smartphones" className="nav-link">Smartphones</Link></li>
+            <li><Link to="/tablets" className="nav-link">Tablets</Link></li>
+            <li><Link to="/accessories" className="nav-link">Accessories</Link></li>
+            {loggedIn && user?.role === 'admin' && <li><Link to="/admin" className="nav-link" style={{ color: '#ef4444' }}>Admin</Link></li>}
           </ul>
         </div>
-      </nav>
-    </>
+
+        <div className="nav-right">
+          <div className="search-bar">
+            <svg className="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Search devices..." className="search-input" />
+          </div>
+
+          <div className="nav-icons">
+            <Link to="/cart" className="icon-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+            </Link>
+            {loggedIn && (
+              <button onClick={handleLogout} className="icon-btn danger" title="Logout">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </button>
+            )}
+          </div>
+
+          {!loggedIn && (
+            <div className="nav-auth">
+              <Link to="/signin" className="nav-link">Sign In</Link>
+              <Link to="/signup" className="nav-btn">Sign Up</Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
   )
 }

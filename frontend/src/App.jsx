@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { isAuthenticated, getUser } from './services/auth'
 import Navbar from './components/Navbar'
-import Header from './components/Header'
 import Footer from './components/Footer'
 import Toast from './components/Toast'
 import HomePage from './pages/HomePage'
@@ -11,9 +10,11 @@ import InvoicesPage from './pages/InvoicesPage'
 import SignupPage from './pages/SignupPage'
 import SigninPage from './pages/SigninPage'
 import AdminPage from './pages/AdminPage'
+import CheckoutPage from './pages/CheckoutPage'
+import SmartphonesPage from './pages/SmartphonesPage'
 import './styles.css'
 
-export default function App() {
+function AppContent() {
   const [cart, setCart] = useState([])
   const [loggedIn, setLoggedIn] = useState(isAuthenticated())
   const [user, setUser] = useState(getUser())
@@ -67,23 +68,30 @@ export default function App() {
   }
 
   return (
+    <div className="app-container">
+      <Navbar isLoggedIn={loggedIn} user={user} onLogout={handleLogout} />
+      <Toast />
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<HomePage onAddToCart={addToCart} />} />
+          <Route path="/smartphones" element={<SmartphonesPage onAddToCart={addToCart} />} />
+          <Route path="/cart" element={loggedIn ? <CartPage cart={cart} onUpdateQuantity={updateQuantity} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
+          <Route path="/checkout" element={loggedIn ? <CheckoutPage cart={cart} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
+          <Route path="/invoices" element={loggedIn ? <InvoicesPage /> : <Navigate to="/signin" />} />
+          <Route path="/admin" element={loggedIn && user?.role === 'admin' ? <AdminPage /> : <Navigate to="/" />} />
+          <Route path="/signup" element={loggedIn ? <Navigate to="/" /> : <SignupPage onSignup={handleSignup} />} />
+          <Route path="/signin" element={loggedIn ? <Navigate to="/" /> : <SigninPage onSignin={handleSignin} />} />
+        </Routes>
+      </main>
+      <Footer />
+    </div>
+  )
+}
+
+export default function App() {
+  return (
     <Router>
-      <div className="app-container">
-        <Navbar isLoggedIn={loggedIn} user={user} onLogout={handleLogout} />
-        <Header />
-        <Toast />
-        <main className="main-content">
-          <Routes>
-            <Route path="/" element={<HomePage onAddToCart={addToCart} />} />
-            <Route path="/cart" element={loggedIn ? <CartPage cart={cart} onUpdateQuantity={updateQuantity} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
-            <Route path="/invoices" element={loggedIn ? <InvoicesPage /> : <Navigate to="/signin" />} />
-            <Route path="/admin" element={loggedIn && user?.role === 'admin' ? <AdminPage /> : <Navigate to="/" />} />
-            <Route path="/signup" element={loggedIn ? <Navigate to="/" /> : <SignupPage onSignup={handleSignup} />} />
-            <Route path="/signin" element={loggedIn ? <Navigate to="/" /> : <SigninPage onSignin={handleSignin} />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
+      <AppContent />
     </Router>
   )
 }

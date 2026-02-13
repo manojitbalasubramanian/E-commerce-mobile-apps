@@ -1,57 +1,365 @@
+/* HomePage.css */
 .home-page {
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
+  background: #f8fafc;
 }
 
+/* HERO SECTION */
 .hero {
-  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
-  padding: 3rem;
-  border-radius: 12px;
-  text-align: center;
-  margin-bottom: 3rem;
-  border: 1px solid #667eea30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 80px 10%;
+  background: white;
+  min-height: 600px;
 }
 
-.hero h2 {
-  margin: 0 0 1rem 0;
-  font-size: 2rem;
-  color: #2c3e50;
+.hero-content {
+  flex: 1;
+  max-width: 600px;
 }
 
-.hero p {
-  margin: 0;
+.tag-caps {
+  background: #e0e7ff;
+  color: #4338ca;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 20px;
+}
+
+.hero-title {
+  font-size: 4rem;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 20px;
+}
+
+.hero-title .highlight {
+  color: #2563eb;
+  display: block;
+}
+
+.hero-desc {
   font-size: 1.1rem;
-  color: #555;
+  color: #64748b;
+  margin-bottom: 30px;
+  line-height: 1.6;
+  max-width: 480px;
 }
 
-.products-section {
-  margin-top: 2rem;
+.hero-actions {
+  display: flex;
+  gap: 16px;
 }
 
-.products-section h3 {
-  margin-bottom: 2rem;
-  color: #2c3e50;
-  font-size: 1.5rem;
-  border-bottom: 2px solid #667eea;
-  padding-bottom: 0.5rem;
+.btn-primary {
+  background: #0033ff;
+  color: white;
+  padding: 14px 32px;
+  border-radius: 8px;
+  /* Slightly rounded */
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: .3s;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #0f172a;
+  border: 1px solid #cbd5e1;
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+}
+
+.btn-outline:hover {
+  border-color: #94a3b8;
+  background: #f8fafc;
+}
+
+.hero-visual {
+  flex: 1;
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.phone-placeholder {
+  width: 300px;
+  height: 600px;
+  background: #eee;
+  border-radius: 40px;
+  border: 8px solid #1f2937;
+  position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.float-tag {
+  position: absolute;
+  background: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+/* NEW ARRIVALS */
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 10%;
+  margin-top: 60px;
+  margin-bottom: 30px;
+}
+
+.section-title h2 {
+  font-size: 2rem;
+  margin: 0;
+  color: #1e293b;
+}
+
+.section-title p {
+  color: #64748b;
+  margin: 8px 0 0;
+}
+
+.view-all {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 0 10% 80px;
+}
+
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  transition: .3s;
+  position: relative;
+  border: 1px solid #f1f5f9;
+}
+
+.card:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+  transform: translateY(-5px);
+}
+
+.card-img-box {
+  background: #f1f5f9;
+  height: 220px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: white;
+}
+
+.badge.hot {
+  background: #3b82f6;
+}
+
+/* Blue */
+.badge.sale {
+  background: #ef4444;
+  right: 12px;
+  left: auto;
+}
+
+/* Red */
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #1e293b;
+}
+
+.card-specs {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+
+.card-rating {
+  color: #fbbf24;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.count {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-price {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.old-price {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  text-decoration: line-through;
+  display: block;
+  font-weight: 500;
+}
+
+.btn-cart-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #0033ff;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-cart-circle:hover {
+  background: #0022cc;
+}
+
+/* NEWSLETTER */
+.newsletter-section {
+  padding: 60px 10%;
+  margin-bottom: 60px;
+}
+
+.newsletter-box {
+  background: linear-gradient(135deg, #0033ff 0%, #2563eb 100%);
+  border-radius: 24px;
+  padding: 60px;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.newsletter-content {
+  max-width: 500px;
+  z-index: 1;
+}
+
+.newsletter-content h2 {
+  font-size: 2.5rem;
+  margin: 0 0 16px;
+  font-weight: 800;
+}
+
+.newsletter-content p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 30px;
+}
+
+.subscribe-form {
+  display: flex;
+  gap: 12px;
+}
+
+.input-glass {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  flex: 1;
+  outline: none;
+}
+
+.input-glass::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.btn-white {
+  background: white;
+  color: #2563eb;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 8px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.circle-deco {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  bottom: -100px;
+  right: -50px;
 }
 
 @media (max-width: 768px) {
-  .home-page {
-    padding: 1rem;
-  }
-
   .hero {
-    padding: 2rem 1.5rem;
+    flex-direction: column;
+    text-align: center;
+    padding-top: 40px;
   }
 
-  .hero h2 {
-    font-size: 1.5rem;
+  .newsletter-box {
+    flex-direction: column;
+    text-align: center;
+    gap: 40px;
+    padding: 40px 20px;
   }
 
-  .hero p {
-    font-size: 1rem;
+  .subscribe-form {
+    flex-direction: column;
+  }
+
+  .hero-visual {
+    margin-top: 60px;
   }
 }
