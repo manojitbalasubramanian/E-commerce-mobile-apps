@@ -82,17 +82,21 @@ export default function ProductList({ products = [], onAdd }) {
                 <button onClick={onAddWrapped}>Add to cart</button>
                 <button className="buy-now-btn" onClick={() => {
                   const offersSnapshot = (Array.isArray(p.appliedOffers) ? p.appliedOffers : []).filter(o => o && o.active)
-                  navigate('/cart', { state: { buyNowItem: {
-                    id: p._id || p.id,
-                    _id: p._id,
-                    name: p.name,
-                    image: p.image,
-                    quantity: 1,
-                    price: effectivePrice,
-                    originalPrice: p.price,
-                    appliedOffers: offersSnapshot
-                  }}})
-                }}>Buy Now</button>
+                  navigate('/checkout', {
+                    state: {
+                      buyNowItem: {
+                        id: p._id || p.id,
+                        _id: p._id,
+                        name: p.name,
+                        image: p.image,
+                        quantity: 1,
+                        price: effectivePrice,
+                        originalPrice: p.price,
+                        appliedOffers: offersSnapshot
+                      }
+                    }
+                  })
+                }}>Quick Buy</button>
               </div>
             </div>
           </article>

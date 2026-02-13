@@ -63,7 +63,7 @@ router.post('/', verifyToken, async (req, res) => {
       name,
       brand,
       price,
-      offer: offer || undefined,
+      appliedOffers: offer ? [offer] : [],
       description,
       stock: stock || 0,
       image,
@@ -97,7 +97,9 @@ router.put('/:id', verifyToken, async (req, res) => {
     }
 
     const updateObj = { name, brand, price, description, stock, image, updatedAt: new Date() }
-    if (offer !== undefined) updateObj.offer = offer
+    if (offer !== undefined) {
+      updateObj.appliedOffers = offer ? [offer] : []
+    }
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
@@ -122,7 +124,7 @@ router.delete('/:id', verifyToken, async (req, res) => {
 
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) return res.status(404).json({ error: 'Product not found' });
-    
+
     res.json({ message: 'Product deleted successfully' });
   } catch (e) {
     res.status(500).json({ error: e.message });
