@@ -1,164 +1,329 @@
-.invoices-page {
+/* InvoicesPage.css - Updated for Cleaner Card List Design */
+
+.invoices-page-container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+  color: #1e293b;
 }
 
-.invoices-page h2 {
-  color: #2c3e50;
-  margin-bottom: 2rem;
-  font-size: 2rem;
-}
-
-.empty-invoices {
-  text-align: center;
-  padding: 3rem;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  color: #666;
-}
-
-.empty-invoices a {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: #667eea;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
-.empty-invoices a:hover {
-  background-color: #5568d3;
-}
-
-.invoices-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 2rem;
-  width: 100%;
-}
-
-.invoice-card {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.invoice-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-}
-
-.invoice-header {
+/* Header */
+.page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid #f0f0f0;
+  margin-bottom: 2rem;
 }
 
-.invoice-header h4 {
+.header-titles h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 0.5rem 0;
+}
+
+.header-titles p {
+  color: #64748b;
   margin: 0;
-  color: #2c3e50;
-  font-size: 1.2rem;
-}
-
-.invoice-date {
-  font-size: 0.9rem;
-  color: #999;
-}
-
-.invoice-customer {
-  margin-bottom: 1rem;
-}
-
-.invoice-customer p {
-  margin: 0;
-  color: #555;
-}
-
-.invoice-items {
-  margin-bottom: 1.5rem;
-}
-
-.invoice-items h5 {
-  margin: 0 0 0.75rem 0;
-  color: #2c3e50;
   font-size: 0.95rem;
 }
 
-.invoice-item {
+.btn-new-invoice {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s;
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn-new-invoice:hover {
+  background-color: #1d4ed8;
+}
+
+/* Filters */
+.filters-container {
   display: flex;
   justify-content: space-between;
-  padding: 0.5rem 0;
-  color: #666;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  /* Subtle shadow for filter bar */
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background: #f1f5f9;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  width: 40%;
+}
+
+.search-icon {
+  color: #94a3b8;
+  margin-right: 0.5rem;
+}
+
+.search-wrapper input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: #334155;
   font-size: 0.9rem;
 }
 
-.invoice-item span:last-child {
+/* Filter Actions */
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  color: #475569;
+  font-size: 0.85rem;
   font-weight: 500;
-  color: #2c3e50;
+  cursor: pointer;
 }
 
-.invoice-product-ids {
-  margin-bottom: 1.5rem;
+.filter-btn:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
 }
 
-.invoice-product-ids h5 {
-  margin: 0 0 0.75rem 0;
-  color: #2c3e50;
+.icon-only {
+  padding: 0.5rem 0.75rem;
+}
+
+/* Invoice List */
+.invoices-list-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.invoice-row-card {
+  display: flex;
+  align-items: center;
+  background-color: #ecfdf5;
+  /* Light mint/emerald green background */
+  border-left: 4px solid #10b981;
+  /* Green accent border */
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  justify-content: space-between;
+  /* Space out columns */
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: default;
+  /* Not strictly clickable as a whole, but feels interactive */
+}
+
+.invoice-row-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -1px rgba(16, 185, 129, 0.06);
+}
+
+/* Icon Box */
+.invoice-icon-box {
+  background: white;
+  border-radius: 8px;
+  /* Slightly rounded square */
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #10b981;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  margin-right: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* Columns */
+.col-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-right: 2rem;
+}
+
+.col-id {
+  flex: 2;
+  /* Allocate more space */
+}
+
+.id-text {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.sub-text {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.col-customer {
+  flex: 2;
+}
+
+.col-summary {
+  flex: 3;
+  /* More space for summary text */
+}
+
+.col-total {
+  flex: 1.5;
+  text-align: right;
+  /* Align right for numbers */
+}
+
+.col-customer label,
+.col-summary label,
+.col-total label {
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  /* Lighter label color */
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.main-text {
+  font-weight: 600;
+  color: #334155;
   font-size: 0.95rem;
 }
 
-.product-id-row {
-  display: flex;
-  flex-direction: column;
-  padding: 0.5rem 0;
-  color: #666;
-  font-size: 0.9rem;
-  border-bottom: 1px solid #f0f0f0;
+.faded {
+  color: #64748b;
+  font-weight: 400;
 }
 
-.product-id-row span:first-child {
-  color: #2c3e50;
-  font-weight: 500;
-}
-
-.invoice-total {
-  padding: 1rem;
-  background-color: #f8f9fa;
-  border-radius: 4px;
-  text-align: right;
-  margin-bottom: 1.5rem;
-  color: #2c3e50;
+.total-text {
+  font-weight: 700;
+  color: #1e293b;
   font-size: 1.1rem;
 }
 
-.download-btn {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.3s ease;
+/* Status Badge */
+.col-status {
+  flex: 1.5;
+  display: flex;
+  justify-content: center;
 }
 
-.download-btn:hover {
-  background-color: #2980b9;
+.status-badge {
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.status-badge.completed {
+  color: #059669;
+  /* Darker green text */
+  background: transparent;
+  /* No background needed as row is green? Or keep transparent on green bg */
+  /* Actually screenshot shows plain text "COMPLETED" in green */
+  color: #047857;
+}
+
+/* Action Button */
+.col-action {
+  flex: 0.5;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-download-icon {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  /* Use gray for icon */
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-download-icon:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+  /* Subtle green hover */
+  color: #10b981;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #64748b;
+  background: white;
+  border-radius: 8px;
+  border: 1px dashed #e2e8f0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .col-summary {
+    display: none;
+    /* Hide summary on smaller screens */
+  }
 }
 
 @media (max-width: 768px) {
-  .invoices-list {
-    grid-template-columns: 1fr;
+  .col-customer {
+    display: none;
+  }
+
+  .invoice-row-card {
+    flex-wrap: wrap;
+    /* Wrap on mobile */
+    gap: 1rem;
+  }
+
+  .col-id,
+  .col-total {
+    flex: 1 0 100%;
+    /* Full width rows */
+    margin-right: 0;
+    text-align: left;
+    /* Reset alignment */
+  }
+
+  .col-status,
+  .col-action {
+    flex: 0;
   }
 }

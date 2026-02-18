@@ -150,7 +150,7 @@ export default function AdminInventory() {
                         <div className="card-image">
                             <img src={product.image || 'https://placehold.co/200'} alt={product.name} />
                         </div>
-                        <div className="card-content">
+                        <div className="product-card-content">
                             <div className="card-header">
                                 <h3>{product.name}</h3>
                                 <span className="price">{formatCurrency(product.price)}</span>

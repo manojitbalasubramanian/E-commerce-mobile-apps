@@ -1,15 +1,16 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { isAuthenticated, logout, getUser } from '../services/auth'
+import { User } from 'lucide-react'
 import '../styles/Navbar.css'
 
-export default function Navbar() {
-  const loggedIn = isAuthenticated()
-  const user = getUser()
+export default function Navbar({ isLoggedIn, user, onLogout }) {
+  const loggedIn = isLoggedIn
+  // const user = user
   const navigate = useNavigate()
 
   function handleLogout() {
-    logout()
+    onLogout()
     navigate('/')
   }
 
@@ -46,6 +47,16 @@ export default function Navbar() {
                 <path d="M16 10a4 4 0 0 1-8 0"></path>
               </svg>
             </Link>
+
+            {loggedIn && (
+              <div className="nav-profile">
+                <div className="profile-icon">
+                  <User size={20} />
+                </div>
+                <span className="profile-name">{user?.name ? user.name.split(' ')[0] : 'User'}</span>
+              </div>
+            )}
+
             {loggedIn && (
               <button onClick={handleLogout} className="icon-btn danger" title="Logout">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

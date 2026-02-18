@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { isAuthenticated, getUser } from './services/auth'
+import { isAuthenticated, getUser, logout } from './services/auth'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Toast from './components/Toast'
@@ -12,6 +12,7 @@ import SigninPage from './pages/SigninPage'
 import AdminPage from './pages/AdminPage'
 import CheckoutPage from './pages/CheckoutPage'
 import SmartphonesPage from './pages/SmartphonesPage'
+import InvoiceDetailsPage from './pages/InvoiceDetailsPage'
 import './styles.css'
 
 function AppContent() {
@@ -63,6 +64,7 @@ function AppContent() {
   }
 
   function handleLogout() {
+    logout()
     setLoggedIn(false)
     setUser(null)
   }
@@ -74,10 +76,12 @@ function AppContent() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<HomePage onAddToCart={addToCart} />} />
+          <Route path="/home" element={<HomePage onAddToCart={addToCart} />} />
           <Route path="/smartphones" element={<SmartphonesPage onAddToCart={addToCart} />} />
           <Route path="/cart" element={loggedIn ? <CartPage cart={cart} onUpdateQuantity={updateQuantity} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
           <Route path="/checkout" element={loggedIn ? <CheckoutPage cart={cart} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
           <Route path="/invoices" element={loggedIn ? <InvoicesPage /> : <Navigate to="/signin" />} />
+          <Route path="/invoices/:id" element={loggedIn ? <InvoiceDetailsPage /> : <Navigate to="/signin" />} />
           <Route path="/admin" element={loggedIn && user?.role === 'admin' ? <AdminPage /> : <Navigate to="/" />} />
           <Route path="/signup" element={loggedIn ? <Navigate to="/" /> : <SignupPage onSignup={handleSignup} />} />
           <Route path="/signin" element={loggedIn ? <Navigate to="/" /> : <SigninPage onSignin={handleSignin} />} />

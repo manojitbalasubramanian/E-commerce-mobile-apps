@@ -91,4 +91,39 @@ router.get('/me', require('../middleware/auth').verifyToken, async (req, res) =>
   }
 });
 
+// Google Signin (Mock)
+router.post('/google', async (req, res) => {
+  try {
+    const { email, name, googleId } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      // Create new user if not exists
+      user = new User({
+        name: name || 'Google User',
+        email,
+        password: googleId || 'google_auth_placeholder', // Dummy password
+        role: 'user',
+        googleId: googleId // Optional field if schema supports it
+      });
+      await user.save();
+    }
+
+    const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' });
+
+    res.json({
+      message: 'Google Signin successful',
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role }
+    });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 module.exports = router;

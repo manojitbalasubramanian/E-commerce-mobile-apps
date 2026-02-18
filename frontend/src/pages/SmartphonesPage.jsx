@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { fetchProducts } from '../services/api'
 import '../styles/HomePage.css'
 // Reusing HomePage CSS for consistent design, can be refactored into a shared CSS later if needed
 
 export default function SmartphonesPage({ onAddToCart }) {
+    const navigate = useNavigate()
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
 
@@ -105,13 +107,20 @@ export default function SmartphonesPage({ onAddToCart }) {
                                             {product.originalPrice && <span className="old-price">₹ {product.originalPrice.toLocaleString()}</span>}
                                             <div className="card-price">₹ {product.price.toLocaleString()}</div>
                                         </div>
-                                        <button className="btn-cart-circle" onClick={() => onAddToCart(product)}>
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <circle cx="9" cy="21" r="1"></circle>
-                                                <circle cx="20" cy="21" r="1"></circle>
-                                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-                                            </svg>
-                                        </button>
+                                        <div className="card-actions">
+                                            <button className="btn-cart-circle" onClick={() => onAddToCart(product)}>
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <circle cx="9" cy="21" r="1"></circle>
+                                                    <circle cx="20" cy="21" r="1"></circle>
+                                                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                                                </svg>
+                                            </button>
+                                            <button className="btn-quick-buy" onClick={() => navigate('/checkout', { state: { buyNowItem: { ...product, quantity: 1 } } })} title="Quick Buy">
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
