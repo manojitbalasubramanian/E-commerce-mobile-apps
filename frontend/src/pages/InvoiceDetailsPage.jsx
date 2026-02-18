@@ -106,9 +106,6 @@ export default function InvoiceDetailsPage() {
                         <Download size={18} />
                         Download PDF
                     </button>
-                    <div className="user-avatar">
-                        <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#b45309' }}>AS</span>
-                    </div>
                 </div>
             </header>
 
