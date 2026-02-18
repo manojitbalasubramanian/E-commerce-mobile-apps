@@ -61,25 +61,33 @@ export function getAuthHeader() {
   return token ? { Authorization: `Bearer ${token}` } : {}
 }
 
+// Singleton to hold the client instance
+let tokenClient;
+let currentResolve;
+let currentReject;
+
 export async function googleSignin() {
-  // Use VITE_GOOGLE_CLIENT_ID from env or a fallback/placeholder
   const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'CUSTOM_CLIENT_ID_NEEDED'
 
-  // If no valid Client ID is provided, use the Mock implementation immediately
-  // to avoid the "Error 401: invalid_client" popup from Google.
+  // If no valid Client ID is provided, use the Mock implementation
   if (CLIENT_ID === 'CUSTOM_CLIENT_ID_NEEDED') {
     return new Promise((resolve, reject) => useMockFallback(resolve, reject))
   }
 
-  // Try Real Google Login first if a Client ID exists
+  // Try Real Google Login
   try {
     if (typeof google === 'undefined') {
       throw new Error('Google script not loaded')
     }
 
     return new Promise((resolve, reject) => {
-      try {
-        const client = google.accounts.oauth2.initTokenClient({
+      // Save resolvers for the callback to use
+      currentResolve = resolve;
+      currentReject = reject;
+
+      // Initialize client ONLY ONCE
+      if (!tokenClient) {
+        tokenClient = google.accounts.oauth2.initTokenClient({
           client_id: CLIENT_ID,
           scope: 'email profile openid',
           callback: async (tokenResponse) => {
@@ -111,32 +119,29 @@ export async function googleSignin() {
                 const data = await r.json()
                 localStorage.setItem('token', data.token)
                 localStorage.setItem('user', JSON.stringify(data.user))
-                resolve(data)
+
+                if (currentResolve) currentResolve(data)
               } catch (err) {
-                reject(err)
+                if (currentReject) currentReject(err)
               }
             }
           },
           error_callback: (err) => {
-            // If client_id is invalid, we might want to fallback to mock
             if (err.type === 'popup_closed') {
-              reject(new Error('Sign in cancelled'))
+              if (currentReject) currentReject(new Error('Sign in cancelled'))
             } else {
-              // Fallback to mock for development if real ID fails
-              console.warn('Real Google Auth failed (likely invalid Client ID). Falling back to mock.', err)
-              useMockFallback(resolve, reject)
+              console.warn('Google Auth Error:', err)
+              // Fallback to mock not recommended here as we are in "Real" mode, 
+              // but we can reject to show error.
+              if (currentReject) currentReject(err)
             }
           }
         });
-
-        // Trigger the popup
-        client.requestAccessToken();
-
-      } catch (err) {
-        // Fallback to mock if initialization fails (e.g. invalid client_id format)
-        console.warn('Google Client Init failed. Falling back to mock.', err)
-        useMockFallback(resolve, reject)
       }
+
+      // Trigger the popup
+      // This uses the existing client, which is faster and trusted by browser logic
+      tokenClient.requestAccessToken();
     })
   } catch (e) {
     return new Promise((resolve, reject) => useMockFallback(resolve, reject))
