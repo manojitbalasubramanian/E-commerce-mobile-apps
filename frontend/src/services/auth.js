@@ -66,6 +66,63 @@ let tokenClient;
 let currentResolve;
 let currentReject;
 
+export function prepareGoogleLogin() {
+  const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'CUSTOM_CLIENT_ID_NEEDED'
+  if (CLIENT_ID === 'CUSTOM_CLIENT_ID_NEEDED') return;
+  if (typeof google === 'undefined') return;
+
+  if (!tokenClient) {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: 'email profile openid',
+      callback: async (tokenResponse) => {
+        if (tokenResponse && tokenResponse.access_token) {
+          try {
+            // Fetch user info from Google
+            const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+              headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+            })
+            const userInfo = await userInfoRes.json()
+
+            // Send to backend
+            const r = await fetch(BASE + '/api/auth/google', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: userInfo.email,
+                name: userInfo.name,
+                googleId: userInfo.sub,
+                picture: userInfo.picture
+              })
+            })
+
+            if (!r.ok) {
+              const error = await r.json()
+              throw new Error(error.message || 'Backend Google Login Failed')
+            }
+
+            const data = await r.json()
+            localStorage.setItem('token', data.token)
+            localStorage.setItem('user', JSON.stringify(data.user))
+
+            if (currentResolve) currentResolve(data)
+          } catch (err) {
+            if (currentReject) currentReject(err)
+          }
+        }
+      },
+      error_callback: (err) => {
+        if (err.type === 'popup_closed') {
+          if (currentReject) currentReject(new Error('Sign in cancelled'))
+        } else {
+          console.warn('Google Auth Error:', err)
+          if (currentReject) currentReject(err)
+        }
+      }
+    });
+  }
+}
+
 export async function googleSignin() {
   const CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || 'CUSTOM_CLIENT_ID_NEEDED'
 
@@ -77,71 +134,26 @@ export async function googleSignin() {
   // Try Real Google Login
   try {
     if (typeof google === 'undefined') {
-      throw new Error('Google script not loaded')
+      // Retry once after a short delay if script is not ready
+      await new Promise(r => setTimeout(r, 500));
+      if (typeof google === 'undefined') throw new Error('Google script not loaded')
     }
+
+    // Ensure client is initialized
+    prepareGoogleLogin();
 
     return new Promise((resolve, reject) => {
       // Save resolvers for the callback to use
       currentResolve = resolve;
       currentReject = reject;
 
-      // Initialize client ONLY ONCE
-      if (!tokenClient) {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: CLIENT_ID,
-          scope: 'email profile openid',
-          callback: async (tokenResponse) => {
-            if (tokenResponse && tokenResponse.access_token) {
-              try {
-                // Fetch user info from Google
-                const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                  headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-                })
-                const userInfo = await userInfoRes.json()
-
-                // Send to backend
-                const r = await fetch(BASE + '/api/auth/google', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: userInfo.email,
-                    name: userInfo.name,
-                    googleId: userInfo.sub,
-                    picture: userInfo.picture
-                  })
-                })
-
-                if (!r.ok) {
-                  const error = await r.json()
-                  throw new Error(error.message || 'Backend Google Login Failed')
-                }
-
-                const data = await r.json()
-                localStorage.setItem('token', data.token)
-                localStorage.setItem('user', JSON.stringify(data.user))
-
-                if (currentResolve) currentResolve(data)
-              } catch (err) {
-                if (currentReject) currentReject(err)
-              }
-            }
-          },
-          error_callback: (err) => {
-            if (err.type === 'popup_closed') {
-              if (currentReject) currentReject(new Error('Sign in cancelled'))
-            } else {
-              console.warn('Google Auth Error:', err)
-              // Fallback to mock not recommended here as we are in "Real" mode, 
-              // but we can reject to show error.
-              if (currentReject) currentReject(err)
-            }
-          }
-        });
-      }
-
       // Trigger the popup
       // This uses the existing client, which is faster and trusted by browser logic
-      tokenClient.requestAccessToken();
+      if (tokenClient) {
+        tokenClient.requestAccessToken();
+      } else {
+        reject(new Error("Google Client failed to initialize"));
+      }
     })
   } catch (e) {
     return new Promise((resolve, reject) => useMockFallback(resolve, reject))
