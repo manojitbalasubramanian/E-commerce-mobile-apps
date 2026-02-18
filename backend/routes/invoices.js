@@ -18,11 +18,25 @@ router.post('/checkout', verifyToken, async (req, res) => {
 
       const items = [];
       for (const entry of cart) {
-         const pid = entry.productId || entry._id || entry.id;
-         if (!pid) return res.status(400).json({ error: 'Each cart item must include a product id' });
+         // Try to find product by MongoDB _id (entry._id or entry.id)
+         let prod;
+         if (entry._id || entry.id) {
+            try {
+               prod = await Product.findById(entry._id || entry.id);
+            } catch (err) {
+               // Ignore cast errors, try next method
+            }
+         }
 
-         const prod = await Product.findById(pid);
-         if (!prod) return res.status(404).json({ error: `Product not found: ${pid}` });
+         // If not found by _id, try finding by custom productId string
+         if (!prod && entry.productId) {
+            prod = await Product.findOne({ productId: entry.productId });
+         }
+
+         if (!prod) {
+            const pid = entry.productId || entry._id || entry.id;
+            return res.status(404).json({ error: `Product not found: ${pid}` });
+         }
 
          const quantity = parseInt(entry.quantity, 10) || 1;
 
@@ -45,7 +59,7 @@ router.post('/checkout', verifyToken, async (req, res) => {
          });
 
          // Reduce stock
-         await Product.findByIdAndUpdate(pid, { $inc: { stock: -quantity } });
+         await Product.findByIdAndUpdate(prod._id, { $inc: { stock: -quantity } });
       }
 
       const total = items.reduce((s, i) => s + i.price * i.quantity, 0);
@@ -71,7 +85,7 @@ router.post('/checkout', verifyToken, async (req, res) => {
 // Get all invoices for logged-in user
 router.get('/', verifyToken, async (req, res) => {
    try {
-      const invoices = await Invoice.find({ userId: req.userId }).populate('items.productId');
+      const invoices = await Invoice.find({ userId: req.userId }).sort({ createdAt: -1 });
       res.json({ invoices });
    } catch (e) {
       res.status(500).json({ error: e.message });
@@ -85,7 +99,7 @@ router.get('/all', verifyToken, async (req, res) => {
       if (!user || user.role !== 'admin') {
          return res.status(403).json({ error: 'Access denied. Admin only.' });
       }
-      const invoices = await Invoice.find().populate('items.productId').sort({ createdAt: -1 });
+      const invoices = await Invoice.find().sort({ createdAt: -1 });
       res.json({ invoices });
    } catch (e) {
       res.status(500).json({ error: e.message });
@@ -114,7 +128,7 @@ router.get('/:id', verifyToken, async (req, res) => {
 router.get('/:id/pdf', verifyToken, async (req, res) => {
    try {
       const user = await User.findById(req.userId);
-      const invoice = await Invoice.findById(req.params.id).populate('items.productId');
+      const invoice = await Invoice.findById(req.params.id);
 
       if (!invoice) return res.status(404).json({ error: 'Invoice not found' });
 
