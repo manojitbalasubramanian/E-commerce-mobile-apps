@@ -13,6 +13,7 @@ import AdminPage from './pages/AdminPage'
 import CheckoutPage from './pages/CheckoutPage'
 import SmartphonesPage from './pages/SmartphonesPage'
 import InvoiceDetailsPage from './pages/InvoiceDetailsPage'
+import ComingSoonPage from './pages/ComingSoonPage'
 import './styles.css'
 
 function AppContent() {
@@ -78,6 +79,8 @@ function AppContent() {
           <Route path="/" element={<HomePage onAddToCart={addToCart} />} />
           <Route path="/home" element={<HomePage onAddToCart={addToCart} />} />
           <Route path="/smartphones" element={<SmartphonesPage onAddToCart={addToCart} />} />
+          <Route path="/tablets" element={<ComingSoonPage title="Tablets" />} />
+          <Route path="/accessories" element={<ComingSoonPage title="Accessories" />} />
           <Route path="/cart" element={loggedIn ? <CartPage cart={cart} onUpdateQuantity={updateQuantity} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
           <Route path="/checkout" element={loggedIn ? <CheckoutPage cart={cart} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
           <Route path="/invoices" element={loggedIn ? <InvoicesPage /> : <Navigate to="/signin" />} />
