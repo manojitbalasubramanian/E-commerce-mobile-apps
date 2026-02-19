@@ -78,7 +78,9 @@ export default function HomePage({ onAddToCart }) {
         </div>
 
         <div className="hero-visual">
-          <div className="phone-placeholder"></div>
+          <div className="phone-placeholder">
+            <div className="camera-notch"></div>
+          </div>
 
           <div className="float-tag" style={{ top: '20%', right: '-20px' }}>
             <span style={{ color: '#10b981' }}>●</span> Snapdragon 8 Gen 3

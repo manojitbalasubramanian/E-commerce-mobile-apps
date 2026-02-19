@@ -13,7 +13,7 @@ export default function AdminInventory() {
     const [showModal, setShowModal] = useState(false)
     const [editingId, setEditingId] = useState(null)
     const [formData, setFormData] = useState({
-        name: '', brand: '', price: '', description: '', stock: '', image: '',
+        name: '', brand: '', price: '', description: '', stock: '', imagesText: '',
         offerName: '', discountPercent: '', offerStartDate: '', offerEndDate: '', offerActive: false
     })
 
@@ -39,13 +39,21 @@ export default function AdminInventory() {
 
     function handleEdit(product) {
         const offer = product.appliedOffers && product.appliedOffers.length > 0 ? product.appliedOffers[0] : null
+
+        let imagesList = [];
+        if (product.images && product.images.length > 0) {
+            imagesList = product.images;
+        } else if (product.image) {
+            imagesList = [product.image];
+        }
+
         setFormData({
             name: product.name,
             brand: product.brand,
             price: product.price,
             description: product.description || '',
             stock: product.stock,
-            image: product.image || '',
+            imagesText: imagesList.join('\n'), // Join with newline for textarea
             offerName: offer?.name || '',
             discountPercent: offer?.discountPercent || '',
             offerStartDate: offer?.startDate ? new Date(offer.startDate).toISOString().slice(0, 10) : '',
@@ -59,7 +67,7 @@ export default function AdminInventory() {
     function handleCloseModal() {
         setShowModal(false)
         setEditingId(null)
-        setFormData({ name: '', brand: '', price: '', description: '', stock: '', image: '', offerName: '', discountPercent: '', offerStartDate: '', offerEndDate: '', offerActive: false })
+        setFormData({ name: '', brand: '', price: '', description: '', stock: '', imagesText: '', offerName: '', discountPercent: '', offerStartDate: '', offerEndDate: '', offerActive: false })
     }
 
     async function handleSubmit(e) {
@@ -82,6 +90,16 @@ export default function AdminInventory() {
                 }
             }
 
+            // Parse images
+            const imagesArray = formData.imagesText
+                .split('\n')
+                .map(s => s.trim())
+                .filter(s => s.length > 0);
+
+            // First image handles legacy 'image' field if needed
+            const mainImage = imagesArray.length > 0 ? imagesArray[0] : '';
+
+
             const res = await fetch(url, {
                 method,
                 headers: {
@@ -94,7 +112,8 @@ export default function AdminInventory() {
                     price: parseFloat(formData.price),
                     description: formData.description,
                     stock: parseInt(formData.stock),
-                    image: formData.image,
+                    image: mainImage,
+                    images: imagesArray,
                     offer: offerObj
                 })
             })
@@ -216,8 +235,13 @@ export default function AdminInventory() {
                                     <input type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} required />
                                 </div>
                                 <div className="form-group full-width">
-                                    <label>Image URL</label>
-                                    <input type="url" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="https://..." />
+                                    <label>Image URLs (One per line)</label>
+                                    <textarea
+                                        value={formData.imagesText}
+                                        onChange={e => setFormData({ ...formData, imagesText: e.target.value })}
+                                        placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"
+                                        rows="4"
+                                    ></textarea>
                                 </div>
                                 <div className="form-group full-width">
                                     <label>Description / Specs</label>

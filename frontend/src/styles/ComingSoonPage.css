@@ -1,0 +1,80 @@
+.coming-soon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-color: #f8fafc;
+    text-align: center;
+    padding: 2rem;
+}
+
+.coming-soon-content {
+    background: white;
+    padding: 3rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: 500px;
+    width: 100%;
+}
+
+.coming-soon-content h1 {
+    font-size: 2.5rem;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    font-weight: 800;
+}
+
+.coming-soon-badge {
+    display: inline-block;
+    background-color: #dbeafe;
+    color: #2563eb;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.coming-soon-content p {
+    color: #64748b;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.coming-soon-animation {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    font-size: 2rem;
+}
+
+.coming-soon-animation span {
+    animation: bounce 2s infinite ease-in-out;
+}
+
+.coming-soon-animation span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.coming-soon-animation span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.coming-soon-animation span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
