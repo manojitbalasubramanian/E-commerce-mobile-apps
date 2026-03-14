@@ -1,9 +1,10 @@
-/* Footer.css */
 .footer {
   background: #1a1b25;
   color: #a0a0a0;
   padding: 80px 10% 40px;
-  margin-top: auto;
+  margin-top: 0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .footer-content {

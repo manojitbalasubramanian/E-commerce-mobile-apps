@@ -35,7 +35,7 @@ router.post('/', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can add products' });
     }
 
-    const { name, brand, price, description, stock, image, offer } = req.body;
+    let { name, brand, price, description, stock, image, images, offer } = req.body;
 
     if (!name || !brand || price === undefined) {
       return res.status(400).json({ error: 'Name, brand, and price are required' });
@@ -47,6 +47,14 @@ router.post('/', verifyToken, async (req, res) => {
         const dp = Number(offer.discountPercent)
         if (isNaN(dp) || dp < 0 || dp > 100) return res.status(400).json({ error: 'Invalid offer discountPercent' })
       }
+    }
+
+    // Improve image handling: if multiple images provided, use first as main 'image' if not set
+    if (images && Array.isArray(images) && images.length > 0) {
+      if (!image) image = images[0];
+    } else if (image) {
+      // If only single image provided, make it array
+      images = [image];
     }
 
     // Generate sequential productId
@@ -67,6 +75,7 @@ router.post('/', verifyToken, async (req, res) => {
       description,
       stock: stock || 0,
       image,
+      images: images || [],
       productId,
       createdBy: req.userId
     });
@@ -86,7 +95,7 @@ router.put('/:id', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can update products' });
     }
 
-    const { name, brand, price, description, stock, image, offer } = req.body;
+    let { name, brand, price, description, stock, image, images, offer } = req.body;
 
     // Validate offer if provided
     if (offer) {
@@ -96,7 +105,17 @@ router.put('/:id', verifyToken, async (req, res) => {
       }
     }
 
-    const updateObj = { name, brand, price, description, stock, image, updatedAt: new Date() }
+    // Sync image/images
+    if (images && Array.isArray(images) && images.length > 0) {
+      if (!image) image = images[0];
+    } else if (image) {
+      // If only single image provided, ensure array has it
+      // However on update we must be careful not to overwrite empty array if user meant to clear
+      // But here we assume user sends what they want.
+      if (!images || images.length === 0) images = [image];
+    }
+
+    const updateObj = { name, brand, price, description, stock, image, images, updatedAt: new Date() }
     if (offer !== undefined) {
       updateObj.appliedOffers = offer ? [offer] : []
     }

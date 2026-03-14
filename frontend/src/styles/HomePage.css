@@ -1,7 +1,6 @@
-/* HomePage.css */
 .home-page {
   width: 100%;
-  background: #f8fafc;
+  background: transparent;
 }
 
 /* HERO SECTION */
@@ -10,7 +9,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 80px 10%;
-  background: white;
+  background: linear-gradient(180deg, #c697e6 0%, #ead8f6 100%);
   min-height: 600px;
 }
 
@@ -101,11 +100,61 @@
 .phone-placeholder {
   width: 300px;
   height: 600px;
-  background: #eee;
+  background: linear-gradient(135deg, #1e1e24 0%, #121212 100%);
   border-radius: 40px;
-  border: 8px solid #1f2937;
+  border: 4px solid #333;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    0 0 0 8px #0f172a,
+    /* Outer bezel */
+    0 50px 100px -20px rgba(0, 0, 0, 0.5),
+    /* Drop shadow */
+    inset 0 0 40px rgba(0, 0, 0, 0.8);
+  /* Inner depth */
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* Screen content/glare */
+.phone-placeholder::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 40%);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Fake UI / Wallpaper */
+.phone-placeholder::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  background: url('https://images.unsplash.com/photo-1616041639908-01235bba61d5?q=80&w=260&auto=format&fit=crop');
+  /* Abstract colorful wallpaper */
+  background-size: cover;
+  background-position: center;
+  border-radius: 32px;
+  opacity: 0.9;
+}
+
+/* Notch/Camera */
+.camera-notch {
+  width: 100px;
+  height: 24px;
+  background: #000;
+  border-radius: 0 0 12px 12px;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
 }
 
 .float-tag {
@@ -294,7 +343,7 @@
 /* NEWSLETTER */
 .newsletter-section {
   padding: 60px 10%;
-  margin-bottom: 60px;
+  margin-bottom: 0px;
 }
 
 .newsletter-box {

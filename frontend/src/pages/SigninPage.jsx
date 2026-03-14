@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { signin, googleSignin } from '../services/auth'
+import { signin, googleSignin, prepareGoogleLogin } from '../services/auth'
 import { showToast } from '../utils/toast'
 import '../styles/AuthPage.css'
 
@@ -10,6 +10,14 @@ export default function SigninPage({ onSignin }) {
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    // Initialize Google Client as soon as the page loads
+    const timer = setTimeout(() => {
+      prepareGoogleLogin();
+    }, 1000); // Small delay to ensure script load
+    return () => clearTimeout(timer);
+  }, []);
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -45,7 +53,8 @@ export default function SigninPage({ onSignin }) {
   }
 
   async function handleGoogleSignin() {
-    setLoading(true)
+    // Note: We DO NOT set loading(true) here immediately to avoid
+    // browser popup blockers treating this as a non-user-initiated event.
     try {
       await googleSignin()
       onSignin()
@@ -53,8 +62,6 @@ export default function SigninPage({ onSignin }) {
       navigate('/')
     } catch (e) {
       showToast('Google Sign In failed', 'error')
-    } finally {
-      setLoading(false)
     }
   }
 
