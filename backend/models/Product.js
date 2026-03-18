@@ -11,6 +11,17 @@ const productSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  category: {
+    type: String,
+    enum: ['mobile', 'tablet', 'accessory'],
+    default: 'mobile',
+    index: true
+  },
+  tags: [{
+    type: String,
+    trim: true,
+    lowercase: true
+  }],
   price: {
     type: Number,
     required: true,
@@ -40,6 +51,16 @@ const productSchema = new mongoose.Schema({
   images: [{
     type: String
   }],
+  viewCount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  purchaseCount: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
   productId: {
     type: String,
     unique: true,
