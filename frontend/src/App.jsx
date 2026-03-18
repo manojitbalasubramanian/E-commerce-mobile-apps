@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { isAuthenticated, getUser, logout } from './services/auth'
+import { trackActivity } from './services/api'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import Toast from './components/Toast'
@@ -14,6 +15,7 @@ import CheckoutPage from './pages/CheckoutPage'
 import SmartphonesPage from './pages/SmartphonesPage'
 import InvoiceDetailsPage from './pages/InvoiceDetailsPage'
 import ComingSoonPage from './pages/ComingSoonPage'
+import RecommendationsPage from './pages/RecommendationsPage'
 import './styles.css'
 
 function AppContent() {
@@ -44,6 +46,10 @@ function AppContent() {
       }
       return [...prev, item]
     })
+    // Track cart_add activity for recommendation engine
+    if (isAuthenticated()) {
+      trackActivity(normalizedId, 'cart_add')
+    }
   }
 
   function updateQuantity(id, qty) {
@@ -81,6 +87,7 @@ function AppContent() {
           <Route path="/smartphones" element={<SmartphonesPage onAddToCart={addToCart} />} />
           <Route path="/tablets" element={<ComingSoonPage title="Tablets" />} />
           <Route path="/accessories" element={<ComingSoonPage title="Accessories" />} />
+          <Route path="/recommendations" element={<RecommendationsPage onAddToCart={addToCart} />} />
           <Route path="/cart" element={loggedIn ? <CartPage cart={cart} onUpdateQuantity={updateQuantity} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
           <Route path="/checkout" element={loggedIn ? <CheckoutPage cart={cart} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
           <Route path="/invoices" element={loggedIn ? <InvoicesPage /> : <Navigate to="/signin" />} />
