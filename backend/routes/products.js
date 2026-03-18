@@ -35,7 +35,7 @@ router.post('/', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can add products' });
     }
 
-    let { name, brand, price, description, stock, image, images, offer } = req.body;
+    let { name, brand, price, description, stock, image, images, offer, category, tags } = req.body;
 
     if (!name || !brand || price === undefined) {
       return res.status(400).json({ error: 'Name, brand, and price are required' });
@@ -70,6 +70,8 @@ router.post('/', verifyToken, async (req, res) => {
     const product = new Product({
       name,
       brand,
+      category: category || 'mobile',
+      tags: tags || [],
       price,
       appliedOffers: offer ? [offer] : [],
       description,
@@ -95,7 +97,7 @@ router.put('/:id', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Only admins can update products' });
     }
 
-    let { name, brand, price, description, stock, image, images, offer } = req.body;
+    let { name, brand, price, description, stock, image, images, offer, category, tags } = req.body;
 
     // Validate offer if provided
     if (offer) {
@@ -116,6 +118,8 @@ router.put('/:id', verifyToken, async (req, res) => {
     }
 
     const updateObj = { name, brand, price, description, stock, image, images, updatedAt: new Date() }
+    if (category !== undefined) updateObj.category = category;
+    if (tags !== undefined) updateObj.tags = tags;
     if (offer !== undefined) {
       updateObj.appliedOffers = offer ? [offer] : []
     }
