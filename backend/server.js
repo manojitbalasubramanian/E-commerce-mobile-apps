@@ -15,6 +15,7 @@ const authRoutes = require('./routes/auth');
 const productRoutes = require('./routes/products');
 const invoiceRoutes = require('./routes/invoices');
 const offerRoutes = require('./routes/offers');
+const recommendationRoutes = require('./routes/recommendations');
 
 // Initialize Express app
 const app = express();
@@ -37,6 +38,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/offers', offerRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

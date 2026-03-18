@@ -66,6 +66,19 @@
   color: white;
 }
 
+.nav-link-special {
+  background: linear-gradient(135deg, #818cf8, #c084fc);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600 !important;
+}
+
+.nav-link-special:hover {
+  -webkit-text-fill-color: #c084fc;
+  filter: brightness(1.2);
+}
+
 .nav-right {
   display: flex;
   align-items: center;

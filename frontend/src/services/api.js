@@ -115,3 +115,94 @@ export async function downloadInvoicePDF(invoiceId) {
     throw e
   }
 }
+
+// ═══════════════════════════════════════════════════
+//  RECOMMENDATION API
+// ═══════════════════════════════════════════════════
+
+export async function trackActivity(productId, actionType) {
+  try {
+    const headers = { 'Content-Type': 'application/json', ...getAuthHeader() }
+    const r = await fetch(BASE + '/api/recommendations/track', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ productId, actionType })
+    })
+    return handleResponse(r, 'Failed to track activity')
+  } catch (e) {
+    // Silently fail — tracking should not block UX
+    console.warn('Activity tracking failed:', e.message)
+  }
+}
+
+export async function fetchPersonalizedRecommendations(limit = 12) {
+  const headers = { 'Content-Type': 'application/json', ...getAuthHeader() }
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/personalized?limit=${limit}`,
+    { headers },
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch recommendations' }
+  )
+}
+
+export async function fetchSimilarProducts(productId, limit = 8) {
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/similar/${productId}?limit=${limit}`,
+    {},
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch similar products' }
+  )
+}
+
+export async function fetchTrendingProducts(category = '', limit = 10) {
+  const params = new URLSearchParams({ limit })
+  if (category) params.set('category', category)
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/trending?${params}`,
+    {},
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch trending products' }
+  )
+}
+
+export async function fetchBoughtTogether(productId, limit = 6) {
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/bought-together/${productId}?limit=${limit}`,
+    {},
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch bought together products' }
+  )
+}
+
+export async function fetchCategoryRecommendations(category, limit = 12) {
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/category/${category}?limit=${limit}`,
+    {},
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch category recommendations' }
+  )
+}
+
+export async function fetchDeals(limit = 10) {
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/deals?limit=${limit}`,
+    {},
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch deals' }
+  )
+}
+
+export async function fetchNewArrivals(category = '', limit = 10) {
+  const params = new URLSearchParams({ limit })
+  if (category) params.set('category', category)
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/new-arrivals?${params}`,
+    {},
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch new arrivals' }
+  )
+}
+
+export async function fetchBudgetRecommendations(min, max, category = '', limit = 12) {
+  const params = new URLSearchParams({ min, max, limit })
+  if (category) params.set('category', category)
+  return fetchJsonWithRetry(
+    BASE + `/api/recommendations/budget?${params}`,
+    {},
+    { retries: 2, delay: 500, fallbackMessage: 'Failed to fetch budget recommendations' }
+  )
+}
+

@@ -26,6 +26,7 @@ export default function Navbar({ isLoggedIn, user, onLogout }) {
             <li><Link to="/smartphones" className="nav-link">Smartphones</Link></li>
             <li><Link to="/tablets" className="nav-link">Tablets</Link></li>
             <li><Link to="/accessories" className="nav-link">Accessories</Link></li>
+            <li><Link to="/recommendations" className="nav-link nav-link-special">✨ For You</Link></li>
             {loggedIn && user?.role === 'admin' && <li><Link to="/admin" className="nav-link" style={{ color: '#ef4444' }}>Admin</Link></li>}
           </ul>
         </div>

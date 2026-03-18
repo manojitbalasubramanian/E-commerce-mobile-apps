@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../styles/HomePage.css'
-import { fetchProducts } from '../services/api'
+import { fetchProducts, fetchTrendingProducts, fetchPersonalizedRecommendations, fetchCategoryRecommendations, trackActivity } from '../services/api'
+import { isAuthenticated } from '../services/auth'
+import RecommendationCarousel from '../components/RecommendationCarousel'
 
 export default function HomePage({ onAddToCart }) {
   const navigate = useNavigate()
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
+  const [recMobiles, setRecMobiles] = useState([])
+  const [recTablets, setRecTablets] = useState([])
+  const [recAccessories, setRecAccessories] = useState([])
+  const [personalRecs, setPersonalRecs] = useState(null)
+  const loggedIn = isAuthenticated()
 
   useEffect(() => {
     async function loadProducts() {
@@ -50,8 +57,30 @@ export default function HomePage({ onAddToCart }) {
         setLoading(false)
       }
     }
+
+    async function loadRecommendations() {
+      try {
+        const [mobRes, tabRes, accRes] = await Promise.all([
+          fetchTrendingProducts('mobile', 10).catch(() => ({ products: [] })),
+          fetchTrendingProducts('tablet', 8).catch(() => ({ products: [] })),
+          fetchCategoryRecommendations('accessory', 8).catch(() => ({ products: [] }))
+        ])
+        setRecMobiles(mobRes?.products || [])
+        setRecTablets(tabRes?.products || [])
+        setRecAccessories(accRes?.products || [])
+
+        if (loggedIn) {
+          const personal = await fetchPersonalizedRecommendations(8).catch(() => null)
+          if (personal) setPersonalRecs(personal)
+        }
+      } catch (err) {
+        console.error("Failed to load recommendations:", err)
+      }
+    }
+
     loadProducts()
-  }, [])
+    loadRecommendations()
+  }, [loggedIn])
 
   if (loading) {
     return <div className="home-page" style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -72,7 +101,7 @@ export default function HomePage({ onAddToCart }) {
             Experience the revolutionary Neo-X flagship. Powered by the world's first AI-integrated processor and an ultra-vivid 165Hz display.
           </p>
           <div className="hero-actions">
-            <button className="btn-primary">Explore Now →</button>
+            <button className="btn-primary" onClick={() => navigate('/recommendations')}>Explore Now →</button>
             <button className="btn-outline">View Specs</button>
           </div>
         </div>
@@ -93,6 +122,19 @@ export default function HomePage({ onAddToCart }) {
           </div>
         </div>
       </section>
+
+      {/* Personalized Recommendations (logged-in users) */}
+      {loggedIn && personalRecs && personalRecs.products && personalRecs.products.length > 0 && (
+        <RecommendationCarousel
+          title="Recommended For You"
+          subtitle={personalRecs.preferences ? `Based on your interests in ${personalRecs.preferences.topBrands?.slice(0, 2).join(' & ')}` : 'Handpicked just for you'}
+          products={personalRecs.products}
+          onAddToCart={onAddToCart}
+          icon="🎯"
+          accentColor="#8b5cf6"
+          strategy={personalRecs.strategy}
+        />
+      )}
 
       {/* New Arrivals */}
       <section className="products-section">
@@ -159,6 +201,45 @@ export default function HomePage({ onAddToCart }) {
         </div>
       </section>
 
+      {/* Trending Mobiles Carousel */}
+      <RecommendationCarousel
+        title="Trending Mobiles"
+        subtitle="Most popular smartphones this week"
+        products={recMobiles}
+        onAddToCart={onAddToCart}
+        icon="📱"
+        accentColor="#3b82f6"
+        strategy="trending"
+        showViewAll
+        viewAllLink="/smartphones"
+      />
+
+      {/* Tablets Carousel */}
+      <RecommendationCarousel
+        title="Top Tablets"
+        subtitle="Premium tablets for productivity & entertainment"
+        products={recTablets}
+        onAddToCart={onAddToCart}
+        icon="💻"
+        accentColor="#06b6d4"
+        strategy="trending"
+        showViewAll
+        viewAllLink="/tablets"
+      />
+
+      {/* Accessories Carousel */}
+      <RecommendationCarousel
+        title="Essential Accessories"
+        subtitle="Complete your setup with these must-haves"
+        products={recAccessories}
+        onAddToCart={onAddToCart}
+        icon="🎧"
+        accentColor="#f59e0b"
+        strategy="category"
+        showViewAll
+        viewAllLink="/accessories"
+      />
+
       {/* Newsletter */}
       <section className="newsletter-section">
         <div className="newsletter-box">
@@ -176,3 +257,4 @@ export default function HomePage({ onAddToCart }) {
     </div>
   )
 }
+
