@@ -10,10 +10,11 @@ export default function AdminInventory() {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(false)
     const [searchTerm, setSearchTerm] = useState('')
+    const [categoryFilter, setCategoryFilter] = useState('all')
     const [showModal, setShowModal] = useState(false)
     const [editingId, setEditingId] = useState(null)
     const [formData, setFormData] = useState({
-        name: '', brand: '', price: '', description: '', stock: '', imagesText: '',
+        name: '', brand: '', category: 'mobile', price: '', description: '', stock: '', imagesText: '',
         offerName: '', discountPercent: '', offerStartDate: '', offerEndDate: '', offerActive: false
     })
 
@@ -50,6 +51,7 @@ export default function AdminInventory() {
         setFormData({
             name: product.name,
             brand: product.brand,
+            category: product.category || 'mobile',
             price: product.price,
             description: product.description || '',
             stock: product.stock,
@@ -67,7 +69,7 @@ export default function AdminInventory() {
     function handleCloseModal() {
         setShowModal(false)
         setEditingId(null)
-        setFormData({ name: '', brand: '', price: '', description: '', stock: '', imagesText: '', offerName: '', discountPercent: '', offerStartDate: '', offerEndDate: '', offerActive: false })
+        setFormData({ name: '', brand: '', category: 'mobile', price: '', description: '', stock: '', imagesText: '', offerName: '', discountPercent: '', offerStartDate: '', offerEndDate: '', offerActive: false })
     }
 
     async function handleSubmit(e) {
@@ -109,6 +111,7 @@ export default function AdminInventory() {
                 body: JSON.stringify({
                     name: formData.name,
                     brand: formData.brand,
+                    category: formData.category,
                     price: parseFloat(formData.price),
                     description: formData.description,
                     stock: parseInt(formData.stock),
@@ -139,10 +142,11 @@ export default function AdminInventory() {
         } catch (e) { console.error(e) }
     }
 
-    const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        p.brand.toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) || p.brand.toLowerCase().includes(searchTerm.toLowerCase())
+        const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter || (categoryFilter === 'mobile' && !p.category)
+        return matchesSearch && matchesCategory
+    })
 
     return (
         <div className="admin-inventory">
@@ -152,6 +156,17 @@ export default function AdminInventory() {
                     <p className="subtitle">Real-time stock monitoring and product controls</p>
                 </div>
                 <div className="header-actions">
+                    <select 
+                        value={categoryFilter} 
+                        onChange={e => setCategoryFilter(e.target.value)}
+                        className="search-input"
+                        style={{ width: 'auto', minWidth: '150px' }}
+                    >
+                        <option value="all">All Categories</option>
+                        <option value="mobile">Mobile</option>
+                        <option value="tablet">Tablets</option>
+                        <option value="accessory">Accessories</option>
+                    </select>
                     <input
                         type="text"
                         placeholder="Search products..."
@@ -174,7 +189,9 @@ export default function AdminInventory() {
                                 <h3>{product.name}</h3>
                                 <span className="price">{formatCurrency(product.price)}</span>
                             </div>
-                            <p className="brand">{product.brand}</p>
+                            <p className="brand">
+                                {product.brand} • <span style={{ textTransform: 'capitalize', color: '#94a3b8' }}>{product.category || 'Mobile'}</span>
+                            </p>
 
                             <div className="stock-badges">
                                 <span className="badge-ram">{product.description?.slice(0, 10)}...</span>
@@ -224,6 +241,14 @@ export default function AdminInventory() {
                                         <option value="OnePlus">OnePlus</option>
                                         <option value="Sony">Sony</option>
                                         <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Category</label>
+                                    <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} required>
+                                        <option value="mobile">Mobile</option>
+                                        <option value="tablet">Tablet</option>
+                                        <option value="accessory">Accessory</option>
                                     </select>
                                 </div>
                                 <div className="form-group">

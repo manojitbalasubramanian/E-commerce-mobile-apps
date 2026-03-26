@@ -13,6 +13,8 @@ import SigninPage from './pages/SigninPage'
 import AdminPage from './pages/AdminPage'
 import CheckoutPage from './pages/CheckoutPage'
 import SmartphonesPage from './pages/SmartphonesPage'
+import TabletsPage from './pages/TabletsPage'
+import AccessoriesPage from './pages/AccessoriesPage'
 import InvoiceDetailsPage from './pages/InvoiceDetailsPage'
 import ComingSoonPage from './pages/ComingSoonPage'
 import RecommendationsPage from './pages/RecommendationsPage'
@@ -85,8 +87,8 @@ function AppContent() {
           <Route path="/" element={<HomePage onAddToCart={addToCart} />} />
           <Route path="/home" element={<HomePage onAddToCart={addToCart} />} />
           <Route path="/smartphones" element={<SmartphonesPage onAddToCart={addToCart} />} />
-          <Route path="/tablets" element={<ComingSoonPage title="Tablets" />} />
-          <Route path="/accessories" element={<ComingSoonPage title="Accessories" />} />
+          <Route path="/tablets" element={<TabletsPage onAddToCart={addToCart} />} />
+          <Route path="/accessories" element={<AccessoriesPage onAddToCart={addToCart} />} />
           <Route path="/recommendations" element={<RecommendationsPage onAddToCart={addToCart} />} />
           <Route path="/cart" element={loggedIn ? <CartPage cart={cart} onUpdateQuantity={updateQuantity} onCheckout={clearCart} /> : <Navigate to="/signin" />} />
           <Route path="/checkout" element={loggedIn ? <CheckoutPage cart={cart} onCheckout={clearCart} /> : <Navigate to="/signin" />} />

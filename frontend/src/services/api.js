@@ -5,6 +5,15 @@ async function handleResponse(r, fallbackMessage) {
   if (r.ok) return r.json()
   let err = { error: fallbackMessage }
   try { err = await r.json() } catch (e) { }
+  
+  // Clear token if invalid (only if a token was actually present and rejected)
+  const token = localStorage.getItem('token');
+  if (token && (r.status === 401 || err.error === 'Invalid token')) {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    window.location.href = '/'
+  }
+
   throw new Error(err.error || err.message || fallbackMessage)
 }
 

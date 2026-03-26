@@ -1,6 +1,6 @@
 .admin-inventory {
     padding: 32px;
-    background-color: #f8fafc;
+    background-color: transparent;
     min-height: 100vh;
 }
 
@@ -35,6 +35,19 @@
     border-radius: 8px;
     width: 300px;
     font-size: 14px;
+    background-color: #fff;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    border-color: #3b82f6;
+}
+
+select.search-input {
+    cursor: pointer;
+    appearance: auto;
 }
 
 .add-btn {
