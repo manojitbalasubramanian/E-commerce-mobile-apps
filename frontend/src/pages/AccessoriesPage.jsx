@@ -4,7 +4,7 @@ import { fetchProducts } from '../services/api'
 import '../styles/HomePage.css'
 // Reusing HomePage CSS for consistent design, can be refactored into a shared CSS later if needed
 
-export default function SmartphonesPage({ onAddToCart }) {
+export default function AccessoriesPage({ onAddToCart }) {
     const navigate = useNavigate()
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true)
@@ -14,10 +14,10 @@ export default function SmartphonesPage({ onAddToCart }) {
             try {
                 const data = await fetchProducts()
                 // Filter out products with no stock
-                // Assuming all products are smartphones as per current data structure,
+                // Assuming all products are Accessories as per current data structure,
                 // or we can filter by category/brand if added later.
                 // For now, filtering by stock > 0 as requested ("in inventory")
-                const inStock = data.filter(p => p.stock > 0 && (p.category === 'mobile' || !p.category))
+                const inStock = data.filter(p => p.stock > 0 && (p.category === 'accessory'))
 
                 // Map backend data to UI format (same logic as HomePage)
                 const mapped = inStock.map(p => {
@@ -69,14 +69,14 @@ export default function SmartphonesPage({ onAddToCart }) {
             <section className="products-section" style={{ paddingTop: '120px' }}>
                 <div className="section-title">
                     <div>
-                        <h2>Smartphones</h2>
+                        <h2>Accessories</h2>
                         <p>Explore our latest collection of premium devices.</p>
                     </div>
                 </div>
 
                 <div className="products-grid">
                     {products.length === 0 ? (
-                        <div className="no-products">No smartphones available in inventory at the moment.</div>
+                        <div className="no-products">No Accessories available in inventory at the moment.</div>
                     ) : (
                         products.map(product => (
                             <div className="card" key={product.id}>
@@ -131,3 +131,4 @@ export default function SmartphonesPage({ onAddToCart }) {
         </div>
     )
 }
+

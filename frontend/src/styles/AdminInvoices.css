@@ -1,6 +1,6 @@
 .admin-invoices-container {
     padding: 2rem;
-    background-color: #f8fafc;
+    background-color: transparent;
     min-height: 100vh;
     font-family: 'Inter', sans-serif;
 }

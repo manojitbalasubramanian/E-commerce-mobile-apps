@@ -131,7 +131,7 @@ export default function AdminInvoices() {
             {loading ? (
                 <div style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading invoices...</div>
             ) : filteredInvoices.length === 0 ? (
-                <div style={{ padding: '60px', textAlign: 'center', background: 'white', borderRadius: '12px', color: '#64748b' }}>
+                <div style={{ padding: '60px', textAlign: 'center', color: '#64748b' }}>
                     No invoices match your criteria.
                 </div>
             ) : (
